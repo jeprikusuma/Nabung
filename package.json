@@ -13,6 +13,10 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
+    "react-native-bootstrap-icons": "*",
+    "react-native-chart-kit": "^6.11.0",
+    "react-native-paper": "^4.8.1",
+    "react-native-popup-menu": "^0.15.10",
     "react-native-web": "~0.13.12"
   },
   "devDependencies": {
