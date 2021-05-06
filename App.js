@@ -2,7 +2,7 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { MenuProvider } from 'react-native-popup-menu';
-import On from './src/pages/Tabungan';
+import On from './src/pages/Rencana/TambahRencana';
 
 
 const theme = {

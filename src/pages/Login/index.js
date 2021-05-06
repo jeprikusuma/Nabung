@@ -74,7 +74,7 @@ const Login = props => {
     fadeIn();
 
     if (toHome) {
-        // return <Home/>;
+        return <Home/>;
     }
     return( 
         <ScrollView>

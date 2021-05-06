@@ -11,6 +11,7 @@ import ListRencana from './ListRencana';
 import ArrowIcon from "react-native-bootstrap-icons/icons/arrow-down-up";
 
 const Rencana = (props) => {
+    let menu;
     const [page, setPage] = useState(1);
     const rencanaListPage = useRef(null);
     const { layout, text, color } = props.theme;

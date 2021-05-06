@@ -11,6 +11,7 @@ import Transaksi from './Transaksi';
 import ArrowIcon from "react-native-bootstrap-icons/icons/arrow-down-up";
 
 const Tabungan = props => {
+    let menu;
     const [page, setPage] = useState(1);
     const historyPage = useRef(null);
 

@@ -79,6 +79,9 @@ const TambahRencana = props => {
             padding: 12,
         },
     }
+    const checkSelected = on => {
+        return status == on ? text.subtitle : text.paragraph;
+    }
     return(
         <View>
             {/* Back> */}
