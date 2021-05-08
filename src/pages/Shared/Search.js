@@ -13,10 +13,7 @@ const Search = (props) => {
             marginBottom: 30
         },
         search: {
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 12,
-            borderBottomLeftRadius: 12,
-            borderBottomRightRadius: 12,
+            borderRadius: 12,
             flexDirection: 'row',
             alignSelf: 'stretch',
             justifyContent: 'flex-start',
@@ -37,6 +34,7 @@ const Search = (props) => {
             <TextInput style={styles.input}
                     placeholder={props.placeholder}
                     placeholderTextColor= {color.secondary}
+                    returnKeyType = "search"
                 />
         </View>
     )
