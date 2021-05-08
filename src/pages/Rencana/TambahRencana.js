@@ -135,7 +135,7 @@ const TambahRencana = props => {
     return(
         <View>
             {/* Back> */}
-            <Back theme = {props.theme} loc ="Tambah Rencana"/>
+            <Back theme = {props.theme} loc ="Tambah Rencana" navigation = {props.navigation}/>
             <ScrollView>
                 <View style={{ ...styles.contain,...layout.container}}>
                     <View style={styles.form}>

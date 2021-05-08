@@ -2,6 +2,7 @@ import React, {useState, useRef} from 'react';
 import { StyleSheet, View, ScrollView, Text, Dimensions, TouchableOpacity, Image, TextInput } from 'react-native';
 import { withTheme } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
+import { SharedElement } from 'react-navigation-shared-element';
 
 import Back from '../Shared/Back';
 
@@ -10,7 +11,6 @@ import LikeIconFill from "react-native-bootstrap-icons/icons/heart-fill";
 import SaveIcon from "react-native-bootstrap-icons/icons/bookmark";
 import SaveIconFill from "react-native-bootstrap-icons/icons/bookmark-fill";
 import SendIcon from "react-native-bootstrap-icons/icons/arrow-right-short";
-import { SharedElement } from 'react-navigation-shared-element';
 
 const allData = [
     {
@@ -30,6 +30,18 @@ const allData = [
     },    
     {
         id: 6,  
+    },      
+    {
+        id: 11,  
+    },      
+    {
+        id: 12,  
+    },      
+    {
+        id: 13,  
+    },      
+    {
+        id: 14,  
     },      
 ]
 
@@ -178,7 +190,7 @@ const DetailArtikel = (props) => {
     }
     const makeTgl = () => {
         const monthIn = ["Januari", "Februari", "Maret", "April", "Mei",
-                        "Juni", "Juli", "September", "Oktober", "November", "Desember"];
+                        "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         const date = new Date(data.date)
         return `${date.getDate()} ${monthIn[date.getMonth()]} ${date.getFullYear()}`
     }

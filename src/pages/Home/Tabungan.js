@@ -42,7 +42,7 @@ const Tabungan = props => {
             <View style={styles.tabungan}>
                 <Text style={text.whiteSuperTitle}>Rp.140.000,-</Text>
                 <Text style={text.whiteParagraph}>Pengeluaran terakhir 5 hari yang lalu sebesar Rp. 110.000,-</Text>
-                <Button style={{...styles.kelola, ...layout.mt1}} labelStyle={{...text.whiteSubtitle, ...styles.kelolaLabel}} mode="contained" onPress={() => props.navigation.navigate('Tabungan')}>
+                <Button style={{...styles.kelola, ...layout.mt1}} labelStyle={{...text.whiteSubtitle, ...styles.kelolaLabel}} mode="contained" onPress={() => props.navigation.navigate('TabunganNavigation')}>
                     Kelola
                 </Button>
             </View>

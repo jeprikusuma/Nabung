@@ -16,7 +16,7 @@ const Ucapan = props => {
 
     useEffect(() => {
         const monthIn = ["Januari", "Februari", "Maret", "April", "Mei",
-                        "Juni", "Juli", "September", "Oktober", "November", "Desember"];
+                        "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         
         setInterval(() => {
             const date = new Date();

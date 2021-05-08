@@ -31,7 +31,7 @@ const Notifikasi = (props) => {
                 <Pesan 
                 theme ={props.theme} 
                 judul = "Tabungan anda menurun!"
-                redaksi = "Penurunan drastis terjadi pada tabungan Anda! Jangan lupa menabung dan kurangi pengeluar..." 
+                redaksi = "Penurunan drastis terjadi pada tabungan Anda! Jangan lupa menabung dan kurangi pengeluaran!" 
                 icon = "GraphDown"/>
                 <Pesan 
                 theme ={props.theme} 

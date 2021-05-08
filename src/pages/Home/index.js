@@ -1,15 +1,17 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 
 import Home from './Home'
 import Pengaturan from '../Pengaturan'
 import Notifikasi from '../Notifikasi'
-import Tabungan from '../Tabungan'
-import Rencana from '../Rencana'
+import TabunganNavigation from '../Tabungan'
+import ArtikelNavigation from '../Artikel'
+import RencanaNavigation from '../Rencana'
+import DetailArtikel from '../Artikel/DetailArtikel'
+import DetailRencana from '../Rencana/DetailRencana';
 
-
-const Stack = createStackNavigator();
+const Stack = createSharedElementStackNavigator();
 
 function HomeNavigation() {
   return (
@@ -22,8 +24,26 @@ function HomeNavigation() {
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Pengaturan" component={Pengaturan} />
         <Stack.Screen name="Notifikasi" component={Notifikasi} />
-        <Stack.Screen name="Tabungan" component={Tabungan} />
-        <Stack.Screen name="Rencana" component={Rencana} />
+        <Stack.Screen name="TabunganNavigation" component={TabunganNavigation}/>
+        <Stack.Screen name="ArtikelNavigation" component={ArtikelNavigation}/>
+        <Stack.Screen name="RencanaNavigation" component={RencanaNavigation} />
+        <Stack.Screen name="DetailRencana" component={DetailRencana} />
+        <Stack.Screen name="DetailArtikel" component={DetailArtikel} 
+        options={{
+            gestureEnabled: false,
+            transitionSpec:{
+                open: {animation: 'timing', config: {duration: 300}},
+                close: {animation: 'timing', config: {duration: 300}},
+            },
+            cardStyleInterpolator:({current: {progress}})=>{
+                return {
+                    cardStyle: {
+                        opacity: progress
+                    }
+                }
+            }
+        }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

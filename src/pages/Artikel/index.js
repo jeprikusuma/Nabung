@@ -1,5 +1,4 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 
 import Artikel from './Artikel'
@@ -10,7 +9,7 @@ const Stack = createSharedElementStackNavigator();
 
 function ArtikelNavigation() {
   return (
-    <NavigationContainer>
+    <>
       <Stack.Navigator initialRouteName = "Artikel" headerMode="none">
         <Stack.Screen name="Artikel" component={Artikel} />
         <Stack.Screen name="BuatArtikel" component={BuatArtikel} />
@@ -32,7 +31,7 @@ function ArtikelNavigation() {
             }}
             />
       </Stack.Navigator>
-    </NavigationContainer>
+    </>
   );
 }
 

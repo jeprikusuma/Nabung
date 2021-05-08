@@ -165,16 +165,13 @@ const Artikel = (props) => {
         setData(allData.sort((a, b) => new Date(a.date) - new Date(b.date)));
         setOnOption('terbaru');
     }
-    const toAdd = () => {
-        props.navigation.push('BuatArtikel', props.navigation)
-    }
     return (
         <View style={layout.container}>
             {/* Back */}
-            <Back theme = {props.theme} loc ="Artikel"/>
+            <Back theme = {props.theme} loc ="Artikel" navigation = {props.navigation}/>
             {/* Search */}
             <View style={styles.search}>
-                <Search theme = {props.theme} placeholder = "Cari artikel" navigation = {props.navigation}/>
+                <Search theme = {props.theme} placeholder = "Cari artikel"/>
             </View>
             {/* Nav */}
             <View style={styles.nav}>
@@ -225,7 +222,7 @@ const Artikel = (props) => {
                 </ScrollView>
             </ScrollView>
             {/* Add */}
-            <Add theme = {props.theme} addEvent={toAdd}/>
+            <Add theme = {props.theme} toPage = 'BuatArtikel' navigation={props.navigation}/>
         </View>
     )
 }

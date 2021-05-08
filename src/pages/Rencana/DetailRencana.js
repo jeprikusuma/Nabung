@@ -11,6 +11,7 @@ import Editable from "react-native-bootstrap-icons/icons/pencil-square";
 const DetailRencana = (props) => {
     const { layout, text, color } = props.theme;
     const windowHeight = Dimensions.get('window').height;
+    const data = props.route.params;
     const styles = StyleSheet.create({
         semuaPesan: {
             alignSelf: 'stretch',
@@ -69,33 +70,77 @@ const DetailRencana = (props) => {
             textTransform: 'capitalize',
             paddingVertical: 9
         },
+        paragraph: {
+            marginBottom: 5,
+        },
         blank: {
             marginBottom: 50
         }
     })
+    const makeTgl = () => {
+        const monthIn = ["Januari", "Februari", "Maret", "April", "Mei",
+                        "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        const date = new Date(data.tgl)
+        return `${date.getDate()} ${monthIn[date.getMonth()]} ${date.getFullYear()}`
+    }
+    const getBg = () => {
+        let tema = data.tema;
+        if(tema == "Red"){
+            return color.redBg;
+        }else if(tema == "Blue"){
+            return color.blueBg;
+        }else if(tema == "Orange"){
+            return color.orangeBg;
+        }else{
+            return color.secondary;
+        }
+    }
+    const getColor = () => {
+        let tema = data.tema;
+        if(tema == "Red"){
+            return color.red;
+        }else if(tema == "Blue"){
+            return color.blue;
+        }else{
+            return "#fff";
+        }
+    }
+    const getContentColor = () => {
+        let tema = data.tema;
+        if(tema == "Red"){
+            return color.red;
+        }else if(tema == "Blue"){
+            return color.blue;
+        }else if(tema == "Orange"){
+            return color.orange;
+        }else{
+            return color.secondary;
+        }
+    }
+    const makeParagraph = str => {
+        str = str.split("&&n&&");
+        return str.map((data, i) => <Text style={{...text.primaryParagraph, ...styles.paragraph, ...{color: getContentColor()}}} key={i}>{data}</Text>)
+    }
     return (
         <View >
-            <StatusBar backgroundColor={color.secondary}/>
+            <StatusBar backgroundColor={getBg()}/>
             {/* Back */}
             <Back theme = {props.theme} loc ="Detail Rencana"/>
             {/* Time */}
-            <View style={styles.header}>
-                <Text style={{...text.superTitle, ...layout.mt1, ...{color: '#fff'}}}>
-                    1 April 2021
+            <View style={{...styles.header, ...{backgroundColor: getBg()}}}>
+                <Text style={{...text.superTitle, ...layout.mt1, ...{color: getColor()}}}>
+                    {makeTgl()}
                 </Text>
-                <Text style={{...text.primaryParagraph, ...{color: '#fff'}}}>
-                    Total biaya Rp. 100.000
+                <Text style={{...text.primaryParagraph, ...{color: getColor()}}}>
+                    {data.redaksi}
                 </Text>
             </View>
             {/* Rencana */}
             <ScrollView style={styles.content}>
-                <Text style={{...text.title, ...layout.mb1}}>Acara Keluarga</Text>
-                <Text style={{...text.paragraph, ...styles.blank}}>
-                    {`Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                    `}
-                </Text>
+                <Text style={{...text.title, ...layout.mb1, ...{color: getContentColor()}}}>{data.judul}</Text>
+                <View style={{ ...styles.blank}}>
+                    {makeParagraph(data.des)}
+                </View>
             </ScrollView>
             {/* Bot */}
             <View style={styles.bot}>

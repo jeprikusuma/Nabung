@@ -2,7 +2,7 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { MenuProvider } from 'react-native-popup-menu';
-import HomeNavigation from './src/pages/Artikel';
+import HomeNavigation from './src/pages/Home';
 
 
 const theme = {
@@ -19,6 +19,7 @@ const theme = {
     blueBg: '#DEF0FC',
     yellowBg: '#FFC391',
     orangeBg: '#FEC13C',
+    orange: '#C39C53'
   },
   layout: {
     ...DefaultTheme.layout,

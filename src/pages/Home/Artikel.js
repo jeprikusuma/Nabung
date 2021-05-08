@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, TouchableOpacity, Text, Image} from 'react-native';
-
+import { SharedElement } from 'react-navigation-shared-element';
 
 
 const Artikel = props => {
@@ -20,15 +20,16 @@ const Artikel = props => {
             resizeMode: 'cover'
         },
     });
-
+    const getName = () => {
+        let title = props.data.title;
+        return title.length > 20 ? title.substring(0, 20) + '...' : title;
+    }
     return (
-        <TouchableOpacity style={styles.artikel} onPress={() => alert("yes")}>
-            <Image style={styles.artikelImg} source={props.imgUrl}></Image>
-            {/* <View style={{...styles.artikelTitle, ...art ? {zIndex: 0}:{}}}>
-                <Text style={text.whiteSubtitle}>{props.title}</Text>
-                <Go width="20" height="20" fill="#FAFAFA"/> 
-            </View> */}
-            <Text style={text.subtitle}>{props.title}</Text>
+        <TouchableOpacity style={styles.artikel} onPress={() => props.navigation.push('DetailArtikel', props.data)}>
+            <SharedElement id={`artikel.${props.id}.img`}>
+                <Image style={styles.artikelImg} source={props.data.img}></Image>
+            </SharedElement>
+            <Text style={text.subtitle}>{getName()}</Text>
         </TouchableOpacity>
     )
 }
