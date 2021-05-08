@@ -40,7 +40,7 @@ const Rencana = props => {
             paddingBottom: 6,
         },
       });
-
+    
     return (
         <View style={styles.area}>
                         <View style={{...styles.lainnya, ...layout.mb1}}>
@@ -86,7 +86,7 @@ const Rencana = props => {
                                     <More width="20" height="20" fill="#B7B1E2"/> 
                                 </View>
                             </View>
-                            <Button style={{...styles.rencanaLainnya}} labelStyle={{...text.subtitle, ...styles.rencanaLainnyaLabel}} onPress={() => console.log('rencana')}>
+                            <Button style={{...styles.rencanaLainnya}} labelStyle={{...text.subtitle, ...styles.rencanaLainnyaLabel}} onPress={() => props.navigation.navigate('Rencana')}>
                                 Atur rencana
                             </Button>
                         </View>

@@ -2,7 +2,7 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { MenuProvider } from 'react-native-popup-menu';
-import On from './src/pages/Artikel/BuatArtikel';
+import HomeNavigation from './src/pages/Artikel';
 
 
 const theme = {
@@ -121,7 +121,7 @@ export default function App() {
     <PaperProvider theme={theme}>
       <StatusBar backgroundColor='white'/>
       <MenuProvider>
-        <On />
+        <HomeNavigation />
       </MenuProvider>
    </PaperProvider>
   );

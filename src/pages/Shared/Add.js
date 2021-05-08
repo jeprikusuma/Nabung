@@ -29,7 +29,7 @@ const Add = (props) => {
    })
 
    return(
-       <TouchableOpacity style={styles.add}>
+       <TouchableOpacity style={styles.add} onPress = {() => props.addEvent()}>
            <Plus width="30" height="30"  style={styles.icon} fill="#fff"/>
        </TouchableOpacity>
    )

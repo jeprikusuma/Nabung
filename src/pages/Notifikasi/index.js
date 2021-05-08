@@ -21,7 +21,7 @@ const Notifikasi = (props) => {
     return (
         <View style={layout.container}>
             {/* Back */}
-            <Back theme = {props.theme} loc ="Notifikasi"/>
+            <Back theme = {props.theme} loc ="Notifikasi" navigation = {props.navigation}/>
             {/* Search */}
             <View style={styles.search}>
                 <Search theme = {props.theme} placeholder = "Cari notifikasi"/>

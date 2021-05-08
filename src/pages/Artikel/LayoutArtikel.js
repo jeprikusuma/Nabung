@@ -36,9 +36,9 @@ const LayoutArtikel = (props) => {
         return props.data.map((data, i) => {
 
             return on == "Left" ? i % 2 == 0 && (
-                <ListArtikel key={i} theme={props.theme} data={data}/>
+                <ListArtikel key={i} theme={props.theme} data={data} navigation={props.navigation}/>
             ) : i % 2 != 0 && (
-                <ListArtikel key={i} theme={props.theme} data={data}/>
+                <ListArtikel key={i} theme={props.theme} data={data} navigation={props.navigation}/>
             )
     })
 }

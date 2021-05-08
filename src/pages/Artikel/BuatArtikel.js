@@ -79,7 +79,7 @@ const BuatArtikel = props => {
     return(
         <View>
             {/* Back> */}
-            <Back theme = {props.theme} loc ="Buat Artikel"/>
+            <Back theme = {props.theme} loc ="Buat Artikel" navigation={props.route.params}/>
             <ScrollView>
                 <View style={{ ...styles.contain,...layout.container}}>
                     <TouchableOpacity style={styles.selectImage}>

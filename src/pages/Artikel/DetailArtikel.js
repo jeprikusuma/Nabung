@@ -10,6 +10,28 @@ import LikeIconFill from "react-native-bootstrap-icons/icons/heart-fill";
 import SaveIcon from "react-native-bootstrap-icons/icons/bookmark";
 import SaveIconFill from "react-native-bootstrap-icons/icons/bookmark-fill";
 import SendIcon from "react-native-bootstrap-icons/icons/arrow-right-short";
+import { SharedElement } from 'react-navigation-shared-element';
+
+const allData = [
+    {
+        id: 1,  
+    },    
+    {
+        id: 2,  
+    },    
+    {
+        id: 3,  
+    },    
+    {
+        id: 4,  
+    },    
+    {
+        id: 5,  
+    },    
+    {
+        id: 6,  
+    },      
+]
 
 const DetailArtikel = (props) => {
     const { layout, text, color } = props.theme;
@@ -21,6 +43,8 @@ const DetailArtikel = (props) => {
     const artikelScroll = useRef(null);
     const windowHeight = Dimensions.get('screen').height;
     const windowWidth = Dimensions.get('window').width;
+
+    const data = props.route.params;
 
     const styles = StyleSheet.create({
         container:{
@@ -88,7 +112,7 @@ const DetailArtikel = (props) => {
             color: color.primary,
             borderRadius: 12,
             alignSelf: 'stretch',
-            backgroundColor: color.grey,
+            backgroundColor: "#E5E5E5",
             height: 53,
             padding: 12, 
         },
@@ -101,7 +125,7 @@ const DetailArtikel = (props) => {
             height: (windowHeight * 40 / 100),
         },
         comment: {
-            backgroundColor: color.grey,
+            backgroundColor: "#E5E5E5",
             padding: 12,
             borderRadius: 12,
             borderTopLeftRadius: 0,
@@ -152,12 +176,18 @@ const DetailArtikel = (props) => {
             setPostComment("");
         }
     }
+    const makeTgl = () => {
+        const monthIn = ["Januari", "Februari", "Maret", "April", "Mei",
+                        "Juni", "Juli", "September", "Oktober", "November", "Desember"];
+        const date = new Date(data.date)
+        return `${date.getDate()} ${monthIn[date.getMonth()]} ${date.getFullYear()}`
+    }
     return (
         <View >
             <StatusBar backgroundColor="transparent"/>
             {/* Back */}
             <View style={styles.nav}>
-                <Back theme = {props.theme} loc ="Artikel"/>
+                <Back theme = {props.theme} loc ="Artikel" navigation = {props.navigation}/>
             </View>
             {/* Content */}
             <ScrollView style={styles.container} 
@@ -166,7 +196,9 @@ const DetailArtikel = (props) => {
             ref= {artikelScroll}>
                 {/* Image */}
                 <View style={styles.header}>
-                    <Image style={styles.image} source={require('../../assets/img/user/artikel/2.jpg')}></Image>
+                    <SharedElement id={`artikel.${data.id}.img`}>
+                        <Image style={styles.image} source={data.img}></Image>
+                    </SharedElement>
                     <View style={styles.status}>
                         <TouchableOpacity 
                         style={{...styles.button, ...styles.like}}
@@ -184,14 +216,14 @@ const DetailArtikel = (props) => {
                 <View style={{...styles.content, ...layout.mb1}}>
                     {/* judul */}
                     <Text style={text.title}>
-                    Manajemen Kesibukan ala Mbak Lisa Blackpink
+                    {data.title}
                     </Text>
                     {/* oleh & tgl */}
                     <Text style={text.paragraph}>
-                        Oleh Mbak Lisa
+                        Oleh {data.user}
                     </Text>
                     <Text style={text.paragraph}>
-                        2 April 2021
+                        {makeTgl()}
                     </Text>
                     {/* konten */}
                     <View style={{...layout.mt1, ...layout.mb1}}>
@@ -223,5 +255,9 @@ const DetailArtikel = (props) => {
             </ScrollView>
         </View>
     )
+}
+
+DetailArtikel.sharedElements = () => {
+    return allData.map(data => `artikel.${data.id}.img`);
 }
 export default withTheme(DetailArtikel);

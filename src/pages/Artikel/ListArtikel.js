@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native';
+import { SharedElement } from 'react-navigation-shared-element';
 
 import GoIcon from "react-native-bootstrap-icons/icons/arrow-right-short";
 import Like from "react-native-bootstrap-icons/icons/heart-fill";
@@ -23,7 +24,6 @@ const ListArtikel = (props) => {
         discoverImage:{
             width: 145,
             height: 160,
-            backgroundColor : 'blue',
             transform: [{translateY: -50}],
             borderRadius: 16,
             position: 'relative'
@@ -61,12 +61,13 @@ const ListArtikel = (props) => {
         }
      })
 
-
    return(
-       <TouchableOpacity style={styles.discoverArtikel} onPress={() => console.log('oke')}>
+       <TouchableOpacity style={styles.discoverArtikel} onPress={() => props.navigation.push('DetailArtikel', props.data)}>
            <View style={styles.artikel}>
                <View style={styles.discoverImage}>
-                   <Image style={styles.image} source={props.data.img}></Image>
+                   <SharedElement id={`artikel.${props.data.id}.img`}>
+                        <Image style={styles.image} source={props.data.img}></Image>
+                   </SharedElement>
                    <View style={styles.go}>
                       <GoIcon width="25" style={styles.backIcon} height="25" fill="#fff"/>
                    </View>

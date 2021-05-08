@@ -37,7 +37,7 @@ const Pengaturan = props => {
     return (
         <View style={layout.container}>
             {/* Back> */}
-            <Back theme = {props.theme} loc ="Pengaturan"/>
+            <Back theme = {props.theme} loc ="Pengaturan" navigation = {props.navigation}/>
             {/* Profile */}
             <View style={styles.profil}>
                 <Avatar.Image size={150} source={require('../../assets/img/user/profile/1.jpg')} />

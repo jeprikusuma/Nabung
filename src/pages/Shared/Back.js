@@ -20,7 +20,7 @@ const Back = (props) => {
         },
     })
     return(
-        <TouchableOpacity style={styles.back} onPress={() => console.log('back')}>
+        <TouchableOpacity style={styles.back} onPress={() => props.navigation.goBack()}>
             <BackIcon width="23" style={styles.backIcon} height="23" fill={color.primary}/> 
             <Text style={text.subtitle}>{props.loc}</Text>
         </TouchableOpacity >

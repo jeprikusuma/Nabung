@@ -78,7 +78,7 @@ const Tabungan = props => {
     return(
         <View style={layout.container}>
             {/* Back */}
-            <Back theme = {props.theme} loc ="Tabungan"/>
+            <Back theme = {props.theme} loc ="Tabungan" navigation = {props.navigation}/>
             {/* Finance */}
             <View style={styles.finance}>
                 <Text style={text.superTitle}>Rp. 140.000,-</Text>

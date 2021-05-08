@@ -75,7 +75,7 @@ const Rencana = (props) => {
     return (
         <View style={layout.container}>
             {/* Back */}
-            <Back theme = {props.theme} loc ="Rencana"/>
+            <Back theme = {props.theme} loc ="Rencana" navigation = {props.navigation}/>
             {/* Search */}
             <View style={styles.search}>
                 <Search theme = {props.theme} placeholder = "Cari rencana"/>
