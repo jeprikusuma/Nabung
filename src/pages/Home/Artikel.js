@@ -27,7 +27,7 @@ const Artikel = props => {
     return (
         <TouchableOpacity style={styles.artikel} onPress={() => props.navigation.push('DetailArtikel', props.data)}>
             <SharedElement id={`artikel.${props.id}.img`}>
-                <Image style={styles.artikelImg} source={props.data.img}></Image>
+                <Image style={styles.artikelImg} source={{uri: "http://192.168.43.60/nabung_api/public/img/user/artikel/" + props.data.img}}></Image>
             </SharedElement>
             <Text style={text.subtitle}>{getName()}</Text>
         </TouchableOpacity>

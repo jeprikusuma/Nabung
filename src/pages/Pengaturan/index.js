@@ -5,6 +5,7 @@ import ToIcon from "react-native-bootstrap-icons/icons/arrow-right-short";
 import Back from '../Shared/Back';
 
 const Pengaturan = props => {
+    const data = props.route.params;
     const {color, text, layout} = props.theme;
     const styles = StyleSheet.create({
         profil: {
@@ -34,15 +35,21 @@ const Pengaturan = props => {
             paddingVertical: 10
         }
     })
+    const makeTgl = () => {
+        const monthIn = ["Januari", "Februari", "Maret", "April", "Mei",
+                        "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        const date = new Date(data.register_at)
+        return `${date.getDate()} ${monthIn[date.getMonth()]} ${date.getFullYear()}`
+    }
     return (
         <View style={layout.container}>
             {/* Back> */}
             <Back theme = {props.theme} loc ="Pengaturan" navigation = {props.navigation}/>
             {/* Profile */}
             <View style={styles.profil}>
-                <Avatar.Image size={150} source={require('../../assets/img/user/profile/1.jpg')} />
-                <Text style={{...text.title, ...styles.name, ...layout.mt1}}>Jepri Kusuma</Text>
-                <Text style={{...text.paragraph, ...styles.desc}}>Terdaftar pada 20 Juli 2020</Text>
+                <Avatar.Image size={150} source={{uri: "http://47.254.194.71/nabung_api/public/img/user/profile/" + data.profil}} />
+                <Text style={{...text.title, ...styles.name, ...layout.mt1}}>{data.name}</Text>
+                <Text style={{...text.paragraph, ...styles.desc}}>Terdaftar pada {makeTgl()}</Text>
             </View>
             {/* Settings */}
             <View style={styles.settings}>

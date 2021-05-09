@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import { StyleSheet, View, ScrollView, Dimensions, TouchableOpacity, Text } from 'react-native';
 import { withTheme } from 'react-native-paper';
 import {Menu, MenuOptions, MenuOption, MenuTrigger} from 'react-native-popup-menu';
@@ -14,56 +14,24 @@ const Rencana = (props) => {
     let menu;
     const [page, setPage] = useState(1);
     const rencanaListPage = useRef(null);
+    const [isLoading, setLoading] = useState(true);
+    const [allRencana, setAllRencana] = useState([]);
+    const [doneRencana, setDoneRencana] = useState([]);
     const { layout, text, color } = props.theme;
     const windowWidth = Dimensions.get('window').width;
 
-    const dataRencana = [
-        {
-            judul : "Acara keluarga",
-            redaksi : "Pengeluaran yang direncanakan sebesar Rp. 100.000" ,
-            tema : "Purple",
-            tgl : "2021-04-01",
-            des : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.&&n&&Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesett"
-        },
-        {
-            judul : "Uang Bidikmisi cair 2 bulan",
-            redaksi : "Pemasukan yang direncanakan sebesar Rp. 1.400.000",
-            tema : "Blue",
-            tgl : "2021-03-02",
-            des : "Lorem Ipsum is hen an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.&&n&&Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesett"
-        },
-        {
-            judul : "Uang untuk kegiatan KKN",
-            redaksi : "Pengeluaran yang direncanakan sebesar Rp. 500.000", 
-            tema : "Orange",
-            tgl : "2021-06-28",
-            des : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.&&n&&Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesett"
+    useEffect(() =>{
+        fetch('http://47.254.194.71/nabung_api/public/API/allRencana/1')
+        .then(res => res.json())
+        .then(data => setAllRencana(data))
+        .catch(e => console.log(e))
 
-        },
-        {
-            judul : "Sembahyang",
-            redaksi : "Pengeluaran yang direncanakan sebesar Rp. 200.000", 
-            tema : "Red",
-            tgl : "2021-12-21",
-            des : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.&&n&&Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesett"
-        }
-    ]
-    const dataRencanaSelesai = [
-        {
-            judul : "Acara keluarga",
-            redaksi : "Pengeluaran yang direncanakan sebesar Rp. 100.000" ,
-            tema : "Purple",
-            tgl : "2021-04-01",
-            des : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.&&n&&Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesett"
-        },
-        {
-            judul : "Uang Bidikmisi cair 2 bulan",
-            redaksi : "Pemasukan yang direncanakan sebesar Rp. 1.400.000",
-            tema : "Blue",
-            tgl : "2021-03-02",
-            des : "Lorem Ipsum is hen an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.&&n&&Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesett"
-        },
-    ]
+        fetch('http://47.254.194.71/nabung_api/public/API/doneRencana/1')
+        .then(res => res.json())
+        .then(data => setDoneRencana(data))
+        .catch(e => console.log(e))
+        .finally(() => setLoading(false))
+    }, [])
 
     const styles = StyleSheet.create({
         search:{
@@ -120,14 +88,14 @@ const Rencana = (props) => {
         pageHandler(pos);
     }
     const listRencana = () => {
-        return dataRencana.map((data, i) => {
+        return allRencana.map((data, i) => {
             return(
                 <ListRencana theme ={props.theme} data={data} key = {i} navigation = {props.navigation}/>
             )
         })
     }
     const listRencanaSelesai = () => {
-        return dataRencanaSelesai.map((data, i) => {
+        return doneRencana.map((data, i) => {
             return(
                 <ListRencana theme ={props.theme} data={data} key = {i} navigation = {props.navigation}/>
             )

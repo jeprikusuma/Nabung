@@ -53,6 +53,23 @@ const ListArtikel = (props) => {
             flexDirection: 'row',
             alignItems: 'center',
         },
+        imageLoading:{
+            backgroundColor: '#C1BEDF',
+            width: 145,
+            height: 160,
+            borderRadius: 16,
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'relative'
+        },
+        loader: {
+            position: 'absolute',
+            width: 60,
+            height: 60,
+            margin: 'auto',
+            top: 50,
+            left: 40,
+        },
         icon: {
             marginHorizontal: 5
         },
@@ -65,18 +82,21 @@ const ListArtikel = (props) => {
        <TouchableOpacity style={styles.discoverArtikel} onPress={() => props.navigation.push('DetailArtikel', props.data)}>
            <View style={styles.artikel}>
                <View style={styles.discoverImage}>
-                   <SharedElement id={`artikel.${props.data.id}.img`}>
-                        <Image style={styles.image} source={props.data.img}></Image>
-                   </SharedElement>
+                   <View style={styles.imageLoading}>
+                        <Image style={styles.loader} source={require('../../assets/img/system/loader.gif')}></Image>
+                        <SharedElement id={`artikel.${props.data.id}.img`}>
+                            <Image style={styles.image} source={{uri: "http://47.254.194.71/nabung_api/public/img/user/artikel/" + props.data.img}}></Image>
+                        </SharedElement>
+                   </View>
                    <View style={styles.go}>
                       <GoIcon width="25" style={styles.backIcon} height="25" fill="#fff"/>
                    </View>
                </View>
                <View style={styles.main}>
                     <View style={{...styles.status, ...layout.mt1}}>
-                        <Text style={text.paragraph}>{props.data.like.length}</Text>
+                        <Text style={text.paragraph}>{props.data.likes.length}</Text>
                         <Like width="13" height="13" style={styles.icon} fill={color.secondary}/>
-                        <Text style={text.paragraph}>{props.data.comment.length}</Text>
+                        <Text style={text.paragraph}>{props.data.comments.length}</Text>
                         <Comment width="13" height="13" style={styles.icon} fill={color.secondary}/>
                     </View>
                     <Text style={{...text.subtitle, ...styles.judul}}>{props.data.title}</Text>

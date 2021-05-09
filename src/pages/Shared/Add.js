@@ -29,7 +29,7 @@ const Add = (props) => {
    })
 
    return(
-       <TouchableOpacity style={styles.add} onPress={() => props.navigation.push(props.toPage, props.navigation)}>
+       <TouchableOpacity style={styles.add} onPress={() => props.navigation.push(props.toPage)}>
            <Plus width="30" height="30"  style={styles.icon} fill="#fff"/>
        </TouchableOpacity>
    )

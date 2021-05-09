@@ -80,11 +80,11 @@ const DetailRencana = (props) => {
     const makeTgl = () => {
         const monthIn = ["Januari", "Februari", "Maret", "April", "Mei",
                         "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        const date = new Date(data.tgl)
+        const date = new Date(data.upload_at)
         return `${date.getDate()} ${monthIn[date.getMonth()]} ${date.getFullYear()}`
     }
     const getBg = () => {
-        let tema = data.tema;
+        let tema = data.theme;
         if(tema == "Red"){
             return color.redBg;
         }else if(tema == "Blue"){
@@ -96,7 +96,7 @@ const DetailRencana = (props) => {
         }
     }
     const getColor = () => {
-        let tema = data.tema;
+        let tema = data.theme;
         if(tema == "Red"){
             return color.red;
         }else if(tema == "Blue"){
@@ -106,7 +106,7 @@ const DetailRencana = (props) => {
         }
     }
     const getContentColor = () => {
-        let tema = data.tema;
+        let tema = data.theme;
         if(tema == "Red"){
             return color.red;
         }else if(tema == "Blue"){
@@ -125,21 +125,21 @@ const DetailRencana = (props) => {
         <View >
             <StatusBar backgroundColor={getBg()}/>
             {/* Back */}
-            <Back theme = {props.theme} loc ="Detail Rencana"/>
+            <Back theme = {props.theme} loc ="Detail Rencana" navigation={props.navigation}/>
             {/* Time */}
             <View style={{...styles.header, ...{backgroundColor: getBg()}}}>
                 <Text style={{...text.superTitle, ...layout.mt1, ...{color: getColor()}}}>
                     {makeTgl()}
                 </Text>
                 <Text style={{...text.primaryParagraph, ...{color: getColor()}}}>
-                    {data.redaksi}
+                    {data.description}
                 </Text>
             </View>
             {/* Rencana */}
             <ScrollView style={styles.content}>
-                <Text style={{...text.title, ...layout.mb1, ...{color: getContentColor()}}}>{data.judul}</Text>
+                <Text style={{...text.title, ...layout.mb1, ...{color: getContentColor()}}}>{data.title}</Text>
                 <View style={{ ...styles.blank}}>
-                    {makeParagraph(data.des)}
+                    {makeParagraph(data.content)}
                 </View>
             </ScrollView>
             {/* Bot */}

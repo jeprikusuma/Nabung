@@ -1,13 +1,13 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { Avatar, withTheme, Button } from 'react-native-paper';
 
 import NotifIcon from "react-native-bootstrap-icons/icons/bell-fill";
 import GoIcon from "react-native-bootstrap-icons/icons/arrow-right-short";
 
-
 // Components
-import Ucapan from './Ucapan'
+import Loading from '../Loading';
+import Ucapan from './Ucapan';
 import Tabungan from './Tabungan';
 import Grafik from './Grafik';
 import Artikel from './Artikel';
@@ -15,78 +15,36 @@ import ListRencana from '../Rencana/ListRencana'
 
 const Home = (props) => {
     const { color, text, layout } = props.theme;
+    const [isLoading, setLoading] = useState(true);
+    const [user, setUser] = useState({}) ;
+    const [artikels, setArtikels] = useState([]) ;
+    const [rencanas, setRencanas] = useState([]) ;
 
-    const artikels = [
-        {  
-            id: 11,           
-            title: "Belajar bisnis ala Film Startup",
-            img: require('../../assets/img/user/artikel/1.png'),
-            date: "2021-03-12",
-            user: "Mbak Lisa",
-            like: [1,],
-            saved: [1,3, 4],
-            comment: [{from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Jepri Kusuma", comment: "Mantapp"}],
-            content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-            
-        },
-        {  
-            id: 12,           
-            title: "Manajemen Kesibukan ala Mbak Lisa Blackpink",
-            img: require('../../assets/img/user/artikel/2.jpg'),
-            date: "2021-04-02",
-            user: "Mbak Lisa",
-            like: [1, 2, 3, 4, 19, 5, 9],
-            saved: [3, 4],
-            comment: [{from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Rio Ariawan", comment: "Bagus banget"},{from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Jepri Kusuma", comment: "Mantapp"}],
-            content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        },
-        {  
-            id: 13,           
-            title: "Definisi kesuksesan menurut Pendiri Microsoft: Bill Gates",
-            img: require('../../assets/img/user/artikel/3.jpg'),
-            date: "2021-05-10",
-            user: "Jepri Kusuma",
-            like: [1, 2],
-            saved: [1, 3, 4],
-            comment: [{from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Jepri Kusuma", comment: "Mantapp"}],
-            content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        },
-        {  
-            id: 14,           
-            title: "Sudut pandang uang dari orang terkaya di Dunia",
-            img: require('../../assets/img/user/artikel/4.png'),
-            date: "2021-05-12",
-            user: "Jepri Kusuma",
-            like: [1, 2, 3],
-            saved: [ 3, 4],
-            comment: [{from: "Jepri Kusuma", comment: "Mantapp"}],
-            content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        },
-    ]
-    const dataRencana = [
-        {
-            judul : "Acara keluarga",
-            redaksi : "Pengeluaran yang direncanakan sebesar Rp. 100.000" ,
-            tema : "Purple",
-            tgl : "2021-04-01",
-            des : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.&&n&&Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesett"
-        },
-        {
-            judul : "Uang Bidikmisi cair 2 bulan",
-            redaksi : "Pemasukan yang direncanakan sebesar Rp. 1.400.000",
-            tema : "Blue",
-            tgl : "2021-03-02",
-            des : "Lorem Ipsum is hen an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.&&n&&Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesett"
-        },
-        {
-            judul : "Uang untuk kegiatan KKN",
-            redaksi : "Pengeluaran yang direncanakan sebesar Rp. 500.000", 
-            tema : "Orange",
-            tgl : "2021-06-28",
-            des : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.&&n&&Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesett"
+    const fetchData = async () => {
+        await fetch('http://47.254.194.71/nabung_api/public/API/getUser/1')
+        .then(res => res.json())
+        .then(data => setUser(data))
+        .catch(e => console.log(e))
 
-        }
-    ]
+        await fetch('http://47.254.194.71/nabung_api/public/API/newArtikels/')
+        .then(res => res.json())
+        .then(data => setArtikels(data))
+        .catch(e => console.log(e))
+
+        await fetch('http://47.254.194.71/nabung_api/public/API/newRencana/1')
+        .then(res => res.json())
+        .then(data => setRencanas(data))
+        .catch(e => console.log(e))
+        .finally(() => setLoading(false))
+    }
+
+    useEffect(() =>{
+        fetchData();
+    }, [])
+
+    if(isLoading){
+        return <Loading/>
+    }
 
     const styles = StyleSheet.create({
         header:{
@@ -169,7 +127,7 @@ const Home = (props) => {
         })
     }
     const listRencana = () => {
-        return dataRencana.map((data, i) => {
+        return rencanas.map((data, i) => {
             return(
                 <ListRencana theme ={props.theme} data={data} key = {i} navigation = {props.navigation}/>
             )
@@ -179,9 +137,9 @@ const Home = (props) => {
         <ScrollView>
             <View style={layout.container}>
                 <View style={styles.header}>
-                    <TouchableOpacity style={styles.profile} onPress ={() => props.navigation.navigate('Pengaturan')}>
-                        <Avatar.Image size={40} source={require('../../assets/img/user/profile/1.jpg')} />
-                        <Text style={{...text.subtitle, ...layout.ml1}}>Jepri Kusuma </Text>
+                    <TouchableOpacity style={styles.profile} onPress ={() => props.navigation.push('Pengaturan', user)}>
+                        <Avatar.Image size={40} source={{uri: "http://47.254.194.71/nabung_api/public/img/user/profile/" + user.profil}} />
+                        <Text style={{...text.subtitle, ...layout.ml1}}>{user.name}</Text>
                     </TouchableOpacity>            
                     <TouchableOpacity style={styles.notif} onPress={() =>props.navigation.navigate('Notifikasi')}>
                         <NotifIcon width="23" style={{flex: 1}} height="23" fill={color.secondary} /> 

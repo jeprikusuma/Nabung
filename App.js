@@ -2,7 +2,7 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { MenuProvider } from 'react-native-popup-menu';
-import HomeNavigation from './src/pages/Home';
+import HomeNavigation from './src/pages/Login';
 
 
 const theme = {
@@ -30,7 +30,7 @@ const theme = {
       paddingTop: 50,
       paddingBottom: 40,
       paddingRight: 20,
-      paddingLeft: 20
+      paddingLeft: 20,
     },
     ml1:{
       marginLeft: 14
@@ -119,9 +119,9 @@ const theme = {
 export default function App() {
 
   return (
-    <PaperProvider theme={theme}>
+    <PaperProvider theme={theme} style={{backgroundColor: 'white'}}>
       <StatusBar backgroundColor='white'/>
-      <MenuProvider>
+      <MenuProvider >
         <HomeNavigation />
       </MenuProvider>
    </PaperProvider>

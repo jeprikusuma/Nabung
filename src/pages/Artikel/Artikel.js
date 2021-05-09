@@ -1,5 +1,5 @@
-import React, {useState, useRef} from 'react';
-import { StyleSheet, View, ScrollView, Dimensions, TouchableOpacity, Text } from 'react-native';
+import React, {useState, useRef, useEffect} from 'react';
+import { StyleSheet, View, ScrollView, Dimensions, TouchableOpacity, Text, Image } from 'react-native';
 import { withTheme } from 'react-native-paper';
 import {Menu, MenuOptions, MenuOption, MenuTrigger} from 'react-native-popup-menu';
 
@@ -16,90 +16,36 @@ const Artikel = (props) => {
     const [page, setPage] = useState(2);
     const artikelListPage = useRef(null);
     const [onOption, setOnOption] = useState('terbaru');
-
+    const [isLoading, setLoading] = useState(true);
     const { layout, text, color } = props.theme;
     const windowWidth = Dimensions.get('window').width;
+    const [data, setData] = useState([]);
 
-    const allData = [
-        {  
-            id: 1,           
-            title: "Belajar bisnis ala Film Startup",
-            img: require('../../assets/img/user/artikel/1.png'),
-            date: "2021-03-12",
-            user: "Mbak Lisa",
-            like: [1,],
-            saved: [1,3, 4],
-            comment: [{from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Jepri Kusuma", comment: "Mantapp"}],
-            content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-            
-        },
-        {  
-            id: 2,           
-            title: "Manajemen Kesibukan ala Mbak Lisa Blackpink",
-            img: require('../../assets/img/user/artikel/2.jpg'),
-            date: "2021-04-02",
-            user: "Mbak Lisa",
-            like: [1, 2, 3, 4, 19, 5, 9],
-            saved: [3, 4],
-            comment: [{from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Rio Ariawan", comment: "Bagus banget"},{from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Jepri Kusuma", comment: "Mantapp"}],
-            content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        },
-        {  
-            id: 3,           
-            title: "Definisi kesuksesan menurut Pendiri Microsoft: Bill Gates",
-            img: require('../../assets/img/user/artikel/3.jpg'),
-            date: "2021-05-10",
-            user: "Jepri Kusuma",
-            like: [1, 2],
-            saved: [1, 3, 4],
-            comment: [{from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Jepri Kusuma", comment: "Mantapp"}],
-            content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        },
-        {  
-            id: 4,           
-            title: "Sudut pandang uang dari orang terkaya di Dunia",
-            img: require('../../assets/img/user/artikel/4.png'),
-            date: "2021-05-12",
-            user: "Jepri Kusuma",
-            like: [1, 2, 3],
-            saved: [ 3, 4],
-            comment: [{from: "Jepri Kusuma", comment: "Mantapp"}],
-            content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        },
-        {  
-            id: 5,           
-            title: "Mengulik perjalanan Facebook",
-            img: require('../../assets/img/user/artikel/5.png'),
-            date: "2021-06-21",
-            user: "Rio Ariawan",
-            like: [1, 2, 3, 9, 1],
-            saved: [1, 3, 4],
-            comment: [{from: "Rio Ariawan", comment: "Bagus banget"},{from: "Rio Ariawan", comment: "Bagus banget"}, {from: "Jepri Kusuma", comment: "Mantapp"}],
-            content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        },
-        {  
-            id: 6,           
-            title: "Menanam saham di Perusahaan Ternama IPhone",
-            img: require('../../assets/img/user/artikel/6.jpg'),
-            date: "2021-06-27",
-            user: "Rio Ariawan",
-            like: [1, 2, 1],
-            saved: [3, 4],
-            comment: [],
-            content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        },
-    ]
+    useEffect(() =>{
+        fetch('http://47.254.194.71/nabung_api/public/API/allArtikels')
+        .then(res => res.json())
+        .then(data => setData(data))
+        .catch(e => console.log(e))
+        .finally(() => setLoading(false))
+
+    }, [])
     
-    const [data, setData] = useState(allData);
     let dataUser = [], dataSaved = [];
-    data.map(item => {
-        item.user == "Jepri Kusuma" && dataUser.push(item);
-        item.saved.includes(1) &&  dataSaved.push(item);
-    })
-
-    dataUser.map(item => {
-        item.on = `${item.id}dataUser`
-    })
+    if(!isLoading){
+        data.map(item => {
+            if(typeof item.likes == "string"){
+                item.likes = JSON.parse(item.likes)
+            }
+            if(typeof item.comments == "string"){
+                item.comments = JSON.parse(item.comments)
+            }
+            if(typeof item.saves == "string"){
+                item.saves = JSON.parse(item.saves)
+            }
+            item.user == "Jepri Kusuma" && dataUser.push(item);
+            item.saves.includes(1) &&  dataSaved.push(item);
+        })
+    }
 
     const styles = StyleSheet.create({
         search:{
@@ -129,6 +75,16 @@ const Artikel = (props) => {
             alignSelf: 'stretch',
             width: windowWidth - 40,
             marginLeft: 20
+        },
+        onLoad: {
+            alignSelf: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: 200
+        },
+        loader:{
+            width: 90,
+            height: 90
         }
     })
     const optionsStyles = {
@@ -158,12 +114,21 @@ const Artikel = (props) => {
         pageHandler(pos);
     }
     const sortLike = () => {
-        setData(allData.sort((a, b) => a.like.length > b.like.length ? -1 : 1));
+        setData(data.sort((a, b) => a.likes.length > b.likes.length ? -1 : 1));
         setOnOption('like');
     }
     const sortTerbaru = () => {
-        setData(allData.sort((a, b) => new Date(a.date) - new Date(b.date)));
+        setData(data.sort((a, b) => new Date(a.date) - new Date(b.date)));
         setOnOption('terbaru');
+    }
+
+    const loadLayout = data => {
+        if(!isLoading) return <LayoutArtikel theme = {props.theme} data = {data} navigation={props.navigation}/>;
+        return(
+            <View style={styles.onLoad}>
+                <Image style={styles.loader} source={require('../../assets/img/system/loader.gif')}></Image>
+            </View>
+        )
     }
     return (
         <View style={layout.container}>
@@ -212,13 +177,13 @@ const Artikel = (props) => {
             onContentSizeChange={() => toPage(windowWidth - 20)}
              >
                 <ScrollView style={styles.listArtikel}>
-                    <LayoutArtikel theme = {props.theme} data = {dataUser} navigation={props.navigation}/>
+                    {loadLayout(dataUser)}
                 </ScrollView>
                 <ScrollView style={styles.listArtikel}>
-                    <LayoutArtikel theme = {props.theme} data = {data} navigation={props.navigation}/>
+                    {loadLayout(data)}
                 </ScrollView>
                 <ScrollView style={styles.listArtikel}>
-                    <LayoutArtikel theme = {props.theme} data = {dataSaved} navigation={props.navigation}/>
+                    {loadLayout(dataSaved)}
                 </ScrollView>
             </ScrollView>
             {/* Add */}

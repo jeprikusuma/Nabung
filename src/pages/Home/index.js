@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme  } from '@react-navigation/native';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 
 import Home from './Home'
@@ -14,8 +14,15 @@ import DetailRencana from '../Rencana/DetailRencana';
 const Stack = createSharedElementStackNavigator();
 
 function HomeNavigation() {
+  const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: 'white'
+    },
+  }
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={theme}>
       <Stack.Navigator 
       screenOptions={{
         headerShown: false
@@ -30,7 +37,7 @@ function HomeNavigation() {
         <Stack.Screen name="DetailRencana" component={DetailRencana} />
         <Stack.Screen name="DetailArtikel" component={DetailArtikel} 
         options={{
-            gestureEnabled: false,
+          gestureEnabled: false,
             transitionSpec:{
                 open: {animation: 'timing', config: {duration: 300}},
                 close: {animation: 'timing', config: {duration: 300}},

@@ -88,7 +88,7 @@ const Tabungan = props => {
             <View style={styles.nav}>
                 <View style={styles.subnav}>
                     <TouchableOpacity onPress={() => {toPage(0)}}>
-                        <Text style={{...page == 1 ? text.subtitle : text.subtitleSec, ...layout.mr1}}>Hari ini</Text>
+                        <Text style={{...page == 1 ? text.subtitle : text.subtitleSec, ...layout.mr1}}>Bulan ini</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => {toPage(windowWidth)}}>
                         <Text style={ page == 2 ? text.subtitle : text.subtitleSec}>Semua</Text>
@@ -143,6 +143,11 @@ const Tabungan = props => {
                     judul = "Membeli kouta internet"
                     keterangan = "Pengeluaran sebesar Rp. 100.000 pada tanggal 12 Februari 2021" 
                     status = "Down"/>
+                    <Transaksi 
+                    theme ={props.theme} 
+                    judul = "Bidikmisi bulan Januari"
+                    keterangan = "Pemasukan sebesar Rp. 700.000 pada tanggal 2 Februari 2021" 
+                    status = "Up"/>
                     <Transaksi  
                     theme ={props.theme} 
                     judul = "Membeli kouta internet"
@@ -153,6 +158,11 @@ const Tabungan = props => {
                     judul = "Membeli kouta internet"
                     keterangan = "Pengeluaran sebesar Rp. 100.000 pada tanggal 12 Februari 2021" 
                     status = "Down"/>
+                    <Transaksi 
+                    theme ={props.theme} 
+                    judul = "Bidikmisi bulan Januari"
+                    keterangan = "Pemasukan sebesar Rp. 700.000 pada tanggal 2 Februari 2021" 
+                    status = "Up"/>
                     <Transaksi  
                     theme ={props.theme} 
                     judul = "Membeli kouta internet"

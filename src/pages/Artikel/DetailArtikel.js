@@ -124,7 +124,7 @@ const DetailArtikel = (props) => {
             color: color.primary,
             borderRadius: 12,
             alignSelf: 'stretch',
-            backgroundColor: "#E5E5E5",
+            backgroundColor: color.grey,
             height: 53,
             padding: 12, 
         },
@@ -137,7 +137,7 @@ const DetailArtikel = (props) => {
             height: (windowHeight * 40 / 100),
         },
         comment: {
-            backgroundColor: "#E5E5E5",
+            backgroundColor: color.grey,
             padding: 12,
             borderRadius: 12,
             borderTopLeftRadius: 0,
@@ -209,7 +209,7 @@ const DetailArtikel = (props) => {
                 {/* Image */}
                 <View style={styles.header}>
                     <SharedElement id={`artikel.${data.id}.img`}>
-                        <Image style={styles.image} source={data.img}></Image>
+                        <Image style={styles.image} source={{uri: "http://47.254.194.71/nabung_api/public/img/user/artikel/" + data.img}}></Image>
                     </SharedElement>
                     <View style={styles.status}>
                         <TouchableOpacity 

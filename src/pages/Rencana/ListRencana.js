@@ -50,16 +50,16 @@ const ListRencana = (props) => {
                month: monthName[toDate.getMonth()],
                year: toDate.getFullYear()}
    }
-   const dateFormat = getDateFormat(props.data.tgl);
+   const dateFormat = getDateFormat(props.data.upload_at);
    return(
        <TouchableOpacity style={{...styles.listRencana, ...layout.mb1}} onPress={() => props.navigation.push('DetailRencana', props.data)}>
-           <View style={{...styles.listRencanaIcon, ...layout.mr1, ...{backgroundColor:  getBg(props.data.tema)}}}>
-                <Text style={{...text.subtitle, ...{color: getColor(props.data.tema)}}}>{dateFormat.month}</Text>
-                <Text style={{...text.paragraph, ...{color: getColor(props.data.tema)}}}>{dateFormat.year}</Text>             
+           <View style={{...styles.listRencanaIcon, ...layout.mr1, ...{backgroundColor:  getBg(props.data.theme)}}}>
+                <Text style={{...text.subtitle, ...{color: getColor(props.data.theme)}}}>{dateFormat.month}</Text>
+                <Text style={{...text.paragraph, ...{color: getColor(props.data.theme)}}}>{dateFormat.year}</Text>             
            </View>
            <View style={styles.listRencanaIsi}>
-               <Text style={text.subtitle}>{props.data.judul}</Text>
-               <Text style={text.paragraph}>{props.data.redaksi}</Text>
+               <Text style={text.subtitle}>{props.data.title}</Text>
+               <Text style={text.paragraph}>{props.data.description}</Text>
            </View>
        </TouchableOpacity>
    )
