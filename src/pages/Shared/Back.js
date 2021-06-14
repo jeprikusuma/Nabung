@@ -11,7 +11,7 @@ const Back = (props) => {
             alignSelf: 'stretch',
             alignItems: 'center',
             position: 'absolute',
-            top: 40,
+            top: 50,
             left: 20,
             zIndex: 9999
         },

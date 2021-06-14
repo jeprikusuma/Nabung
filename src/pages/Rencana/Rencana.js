@@ -31,6 +31,8 @@ const Rencana = (props) => {
         .then(data => setDoneRencana(data))
         .catch(e => console.log(e))
         .finally(() => setLoading(false))
+
+        console.log(props.route)
     }, [])
 
     const styles = StyleSheet.create({

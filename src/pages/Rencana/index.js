@@ -7,11 +7,11 @@ import DetailRencana from './DetailRencana';
 
 const Stack = createSharedElementStackNavigator();
 
-function RencanaNavigation() {
+function RencanaNavigation(props) {
   return (
     <>
       <Stack.Navigator initialRouteName = "Rencana" headerMode="none">
-        <Stack.Screen name="Rencana" component={Rencana} />
+        <Stack.Screen name="Rencana" component={Rencana} initialParams={{ id: props.route.params }}/>
         <Stack.Screen name="TambahRencana" component={TambahRencana} />
         <Stack.Screen name="DetailRencana" component={DetailRencana} />
       </Stack.Navigator>

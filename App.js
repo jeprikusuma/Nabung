@@ -2,7 +2,7 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { MenuProvider } from 'react-native-popup-menu';
-import HomeNavigation from './src/pages/Login';
+import Navigation from './src/pages/Navigator';
 
 
 const theme = {
@@ -75,6 +75,11 @@ const theme = {
       fontSize: 14,
       color: '#5E478B'
     },
+    primaryParagraphBold:{
+      fontSize: 14,
+      color: '#5E478B',
+      fontWeight: 'bold'
+    },
     whiteSuperTitle:{
       fontSize: 28,
       fontWeight: 'bold',
@@ -122,7 +127,7 @@ export default function App() {
     <PaperProvider theme={theme} style={{backgroundColor: 'white'}}>
       <StatusBar backgroundColor='white'/>
       <MenuProvider >
-        <HomeNavigation />
+        <Navigation />
       </MenuProvider>
    </PaperProvider>
   );

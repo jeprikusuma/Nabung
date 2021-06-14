@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { StyleSheet, TextInput, View} from 'react-native';
 import SearchIcon from "react-native-bootstrap-icons/icons/search";
 
 const Search = (props) => {
     const {color, text} = props.theme;
+    const [value, setValue] = useState("");
     const styles = StyleSheet.create({
         back:{
             flexDirection: 'row',
@@ -35,6 +36,8 @@ const Search = (props) => {
                     placeholder={props.placeholder}
                     placeholderTextColor= {color.secondary}
                     returnKeyType = "search"
+                    onChangeText = {text => setValue(text)}
+                    onBlur = {() => props.action(value)}
                 />
         </View>
     )

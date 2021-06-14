@@ -2,14 +2,19 @@ import React, {useState} from 'react';
 import { View, Text, StyleSheet, TextInput, Dimensions, ScrollView} from 'react-native';
 import {Menu, MenuOptions, MenuOption, MenuTrigger} from 'react-native-popup-menu';
 import { withTheme, Button } from 'react-native-paper';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 import Back from '../Shared/Back';
-
 import Chevron from "react-native-bootstrap-icons/icons/chevron-down";
+
+import {baseUrl} from "../../config/config";
 
 const TambahTransaksi = props => {
     let menu;
-    const [status, setStatus] = useState('Pemasukan');
+    const [status, setStatus] = useState('Pemasukan');  
+    const [title, setTitle] = useState('');  
+    const [nominal, setNominal] = useState(0);
+    const [loader, setLoader] = useState(false);  
     const { color, text, layout } = props.theme;
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
@@ -47,9 +52,6 @@ const TambahTransaksi = props => {
         bot:{
             display: 'flex',
             width: windowWidth - 40,
-            marginTop: 50,
-            position: 'absolute',
-            bottom: 0
         },
         button:{
             borderRadius: 13,
@@ -81,6 +83,26 @@ const TambahTransaksi = props => {
     const checkSelected = on => {
         return status == on ? text.subtitle : text.paragraph;
     }
+    const AddTransactionHandler = () => {
+        if(nominal != 0 && title != ""){
+            setLoader(true);
+            fetch(baseUrl+'transaction/add/'+props.route.params.id, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    title: title,
+                    nominal: nominal,
+                    status: status == 'Pemasukan' ? 'Up' : 'Down'
+                })
+            })
+            .finally(() => {
+                setLoader(false);
+                setTimeout(() => {
+                    props.navigation.goBack();
+                },300)
+            });
+        }
+    }
     return(
         <View>
             {/* Back> */}
@@ -91,11 +113,13 @@ const TambahTransaksi = props => {
                         <TextInput style={styles.input}
                             placeholder="Nama transaksi"
                             placeholderTextColor= {color.secondary}
+                            onChangeText = {text => setTitle(text)}
                         />
                         <TextInput style={styles.input}
                             placeholder="Jumlah"
                             placeholderTextColor= {color.secondary}
                             keyboardType = 'numeric'
+                            onChangeText = {text => setNominal(text)}
                         />
                         <Menu ref={r => (menu = r)} >
                             <MenuTrigger style={styles.select}>
@@ -113,12 +137,27 @@ const TambahTransaksi = props => {
                         </Menu>
                     </View>
                     <View style={styles.bot}>
-                        <Button style={{...styles.button, ...styles.tambah, ...layout.mt1}} labelStyle={{...text.whiteSubtitle, ...styles.buttonLabel}} mode="contained" onPress={() => console.log('add')}>
+                        <Button style={{...styles.button, ...styles.tambah, ...layout.mt1}} labelStyle={{...text.whiteSubtitle, ...styles.buttonLabel}} mode="contained" onPress={() => AddTransactionHandler()}>
                             Tambah
                         </Button>
                     </View>
                 </View>
             </ScrollView>
+            <AwesomeAlert
+                show={loader}
+                showProgress={false}
+                useNativeDriver={true}
+                message="Loading..."
+                closeOnTouchOutside={false}
+                closeOnHardwareBackPress={false}
+                contentContainerStyle={{
+                    alignItems: 'center'
+                }}
+                overlayStyle={{
+                    height: '100%'
+                }}
+                messageStyle={text.paragraph}
+                />
         </View> 
     )
 }

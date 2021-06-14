@@ -27,9 +27,9 @@ const Add = (props) => {
            elevation: 24
        },
    })
-
+ 
    return(
-       <TouchableOpacity style={styles.add} onPress={() => props.navigation.push(props.toPage)}>
+       <TouchableOpacity style={styles.add} onPress={() => props.navigation.push(props.toPage, {id: props.id})}>
            <Plus width="30" height="30"  style={styles.icon} fill="#fff"/>
        </TouchableOpacity>
    )

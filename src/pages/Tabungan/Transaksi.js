@@ -7,7 +7,6 @@ import Up from "react-native-bootstrap-icons/icons/arrow-up-short";
 import Down from "react-native-bootstrap-icons/icons/arrow-down-short";
 import Dot from "react-native-bootstrap-icons/icons/three-dots-vertical";
 
-
 const Transaksi = (props) => {
     let menu;
     const {color, text, layout} = props.theme;
@@ -33,14 +32,14 @@ const Transaksi = (props) => {
 
    const optionsStyles = {
     optionsContainer: {
-      borderRadius: 13,
+      borderRadius: 8,
       overflow: 'hidden'
     },
     optionsWrapper: {
-        borderRadius: 13
+        borderRadius: 8
     },
     optionWrapper: {
-        borderRadius: 13,
+        borderRadius: 8,
         padding: 12,
     },
   }
@@ -81,10 +80,7 @@ const Transaksi = (props) => {
                    <Dot width="16" height="16" fill={getColor(props.status)}/>
                </MenuTrigger>
                <MenuOptions customStyles={optionsStyles} >
-                   <MenuOption onSelect={() => alert(`Delete`)} >
-                       <Text style={text.paragraph}>Edit</Text>
-                   </MenuOption>
-                   <MenuOption onSelect={() => alert(`Delete`)} >
+                   <MenuOption onSelect={() => props.deleteTransactionHandler(props.id)} >
                        <Text style={text.redParagraph}>Hapus</Text>
                    </MenuOption>
                </MenuOptions>

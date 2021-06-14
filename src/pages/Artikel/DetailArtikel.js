@@ -268,7 +268,6 @@ const DetailArtikel = (props) => {
         </View>
     )
 }
-
 DetailArtikel.sharedElements = () => {
     return allData.map(data => `artikel.${data.id}.img`);
 }

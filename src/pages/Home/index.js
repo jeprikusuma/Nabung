@@ -22,7 +22,7 @@ function HomeNavigation() {
     },
   }
   return (
-    <NavigationContainer theme={theme}>
+    <>
       <Stack.Navigator 
       screenOptions={{
         headerShown: false
@@ -52,7 +52,7 @@ function HomeNavigation() {
         }}
         />
       </Stack.Navigator>
-    </NavigationContainer>
+    </>
   );
 }
 

@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { Avatar, withTheme, Button } from 'react-native-paper';
+import AsyncStorage from '@react-native-community/async-storage';
+import { SharedElement } from 'react-navigation-shared-element';
 
 import NotifIcon from "react-native-bootstrap-icons/icons/bell-fill";
 import GoIcon from "react-native-bootstrap-icons/icons/arrow-right-short";
@@ -13,18 +15,36 @@ import Grafik from './Grafik';
 import Artikel from './Artikel';
 import ListRencana from '../Rencana/ListRencana'
 
+// Config
+import {Users} from '../../config/database'
+import {profileUrl} from '../../config/config'
+
 const Home = (props) => {
     const { color, text, layout } = props.theme;
     const [isLoading, setLoading] = useState(true);
     const [user, setUser] = useState({}) ;
     const [artikels, setArtikels] = useState([]) ;
     const [rencanas, setRencanas] = useState([]) ;
+    const [id, setId] = useState(null);
 
-    const fetchData = async () => {
-        await fetch('http://47.254.194.71/nabung_api/public/API/getUser/1')
-        .then(res => res.json())
-        .then(data => setUser(data))
-        .catch(e => console.log(e))
+    const fetchData = async (id) => {
+        setId(id);
+
+        // get user data
+        await Users.doc(id).onSnapshot(snapshot => {
+            const getUser = snapshot.data();
+            setUser({
+                id: id,
+                name: getUser.name,
+                profile: getUser.profile,
+                saving: getUser.saving,
+                email: getUser.email,
+                register_at: getUser.date,
+                lastTransaction: getUser.lastTransaction
+            });
+        }, err => {
+            console.log(`Encountered error: ${err}`);
+        });
 
         await fetch('http://47.254.194.71/nabung_api/public/API/newArtikels/')
         .then(res => res.json())
@@ -38,8 +58,27 @@ const Home = (props) => {
         .finally(() => setLoading(false))
     }
 
+    const getId = async () => {
+        try {
+            const jsonValue = await AsyncStorage.getItem('@user_data');
+            if(jsonValue != null){
+              const value = JSON.parse(jsonValue);
+              return (value.id);
+            }else{
+                props.navigation.reset({index: 0, routes: [{ name: 'LoginNavigation'}]});
+            }
+          } catch(e) {
+              console.log(e)
+          }
+    }
+
     useEffect(() =>{
-        fetchData();
+
+        const gettingId = new Promise((res, rej) => {
+            const result = getId();
+            res(result);
+        })
+        gettingId.then(id => fetchData(id));
     }, [])
 
     if(isLoading){
@@ -138,7 +177,9 @@ const Home = (props) => {
             <View style={layout.container}>
                 <View style={styles.header}>
                     <TouchableOpacity style={styles.profile} onPress ={() => props.navigation.push('Pengaturan', user)}>
-                        <Avatar.Image size={40} source={{uri: "http://47.254.194.71/nabung_api/public/img/user/profile/" + user.profil}} />
+                        <SharedElement id={`avatar.img`}>
+                            <Avatar.Image size={40} source={{uri: profileUrl + user.profile}} />
+                        </SharedElement>
                         <Text style={{...text.subtitle, ...layout.ml1}}>{user.name}</Text>
                     </TouchableOpacity>            
                     <TouchableOpacity style={styles.notif} onPress={() =>props.navigation.navigate('Notifikasi')}>
@@ -149,7 +190,7 @@ const Home = (props) => {
                     {/* Ucapan */}
                     <Ucapan theme={props.theme}/>
                     {/* Tabungan */}
-                    <Tabungan theme={props.theme} navigation={props.navigation}/>
+                    <Tabungan theme={props.theme} data={user} navigation={props.navigation}/>
                     {/* Grafik */}
                     <Grafik theme={props.theme}/>
                     {/* Artikel */}
@@ -173,7 +214,7 @@ const Home = (props) => {
                             <Text style={text.subtitle}>Rencana Anda</Text>
                         </View>
                         {listRencana()}
-                        <Button style={{...styles.rencanaLainnya}} labelStyle={{...text.subtitle, ...styles.rencanaLainnyaLabel}} onPress={() => props.navigation.navigate('RencanaNavigation')}>
+                        <Button style={{...styles.rencanaLainnya}} labelStyle={{...text.subtitle, ...styles.rencanaLainnyaLabel}} onPress={() => props.navigation.navigate('RencanaNavigation', {id: id})}>
                                 Atur rencana
                         </Button>
                     </View>
