@@ -1,19 +1,83 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Dimensions, Text} from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 
 const Grafik = props => {
     const { text, color, layout} = props.theme;
+    const [i, setI] = useState(0);
+    const [data, setData] = useState(
+        {
+            labels: [0],
+            datasets: [
+              {
+                data: [0]
+              }
+            ]
+        }
+    )
 
-    const data = {
-        labels: ["Sep", "Okt", "Nov", "Des", "Jan", "Feb"],
-        datasets: [
-          {
-            data: [20, 45, 28, 80, 99, 43]
-          }
-        ]
-    };
-    
+    const setDataGraph = async () => {
+        setI(i + 1);
+        try {
+            let label = [];
+            let dataset = [];
+            const labels = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
+
+            if(props.data == undefined){
+                setData({
+                    labels: [labels[new Date().getMonth()]],
+                    datasets: [
+                    {
+                        data: [0]
+                    }
+                    ]
+                });
+                return;
+            }
+            if(props.data.length == 0){
+                setData({
+                    labels: [labels[new Date().getMonth()]],
+                    datasets: [
+                    {
+                        data: [0]
+                    }
+                    ]
+                });
+                return;
+            }
+
+            await Object.keys(props.data).forEach(el => {
+                el = el.split("-");
+                el = parseInt(el[0]) - 1;
+                label.push(labels[el])
+            });
+
+            await Object.values(props.data).forEach(el => {
+                dataset.push(el)
+            });
+
+            setData({
+                labels: label,
+                datasets: [
+                  {
+                    data: dataset
+                  }
+                ]
+            });
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    // useEffect(() => {
+    //     console.log("cel")
+    // }, [])
+
+    if(data.labels[0] == 7){
+        setDataGraph();
+    }
+
     const chartConfig = {
         backgroundGradientFromOpacity: 0,
         backgroundGradientToOpacity: 0,

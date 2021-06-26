@@ -11,6 +11,8 @@ import Add from '../Shared/Add';
 import ArrowIcon from "react-native-bootstrap-icons/icons/arrow-down-up";
 import LayoutArtikel from './LayoutArtikel';
 
+import {baseUrl} from '../../config/config';
+
 const Artikel = (props) => {
     let menu;
     const [page, setPage] = useState(2);
@@ -20,14 +22,28 @@ const Artikel = (props) => {
     const { layout, text, color } = props.theme;
     const windowWidth = Dimensions.get('window').width;
     const [data, setData] = useState([]);
+    const [dataAll, setDataAll] = useState([]);
+    const [autoReloadArticle, setAutoReloadArticle] = useState(false);
 
-    useEffect(() =>{
-        fetch('http://47.254.194.71/nabung_api/public/API/allArtikels')
+    const getArticles = () => {
+        fetch(baseUrl+'articles')
         .then(res => res.json())
-        .then(data => setData(data))
+        .then(data => {
+            setData(data);
+            setDataAll(data);
+        })
         .catch(e => console.log(e))
         .finally(() => setLoading(false))
+    }
 
+    if(autoReloadArticle){
+        getArticles();
+        setAutoReloadArticle(false);
+        console.log('reload...');
+    }
+
+    useEffect(() =>{
+        getArticles();
     }, [])
     
     let dataUser = [], dataSaved = [];
@@ -42,8 +58,8 @@ const Artikel = (props) => {
             if(typeof item.saves == "string"){
                 item.saves = JSON.parse(item.saves)
             }
-            item.user == "Jepri Kusuma" && dataUser.push(item);
-            item.saves.includes(1) &&  dataSaved.push(item);
+            item.user == props.route.params.id && dataUser.push(item);
+            item.saves.includes(props.route.params.id) &&  dataSaved.push(item);
         })
     }
 
@@ -121,22 +137,26 @@ const Artikel = (props) => {
         setData(data.sort((a, b) => new Date(a.date) - new Date(b.date)));
         setOnOption('terbaru');
     }
-
+    const searchHandler = keyword => {
+        let newDataAll = dataAll.filter(data => data.title.toUpperCase().includes(keyword.toUpperCase()));
+        setData(newDataAll);
+    }
     const loadLayout = data => {
-        if(!isLoading) return <LayoutArtikel theme = {props.theme} data = {data} navigation={props.navigation}/>;
+        if(!isLoading) return <LayoutArtikel theme = {props.theme} data = {data} id = {props.route.params.id} navigation={props.navigation} name={props.route.params.name} reload={setAutoReloadArticle}/>;
         return(
             <View style={styles.onLoad}>
                 <Image style={styles.loader} source={require('../../assets/img/system/loader.gif')}></Image>
             </View>
         )
     }
+
     return (
         <View style={layout.container}>
             {/* Back */}
             <Back theme = {props.theme} loc ="Artikel" navigation = {props.navigation}/>
             {/* Search */}
             <View style={styles.search}>
-                <Search theme = {props.theme} placeholder = "Cari artikel"/>
+                <Search theme = {props.theme} placeholder = "Cari artikel" action={searchHandler}/>
             </View>
             {/* Nav */}
             <View style={styles.nav}>
@@ -187,7 +207,7 @@ const Artikel = (props) => {
                 </ScrollView>
             </ScrollView>
             {/* Add */}
-            <Add theme = {props.theme} toPage = 'BuatArtikel' navigation={props.navigation}/>
+            <Add theme = {props.theme} toPage = 'BuatArtikel' navigation={props.navigation} id={props.route.params.id} reload={setAutoReloadArticle} name={props.route.params.name}/>
         </View>
     )
 }

@@ -3,26 +3,34 @@ import { View, Text, StyleSheet, TextInput, Dimensions, ScrollView, TouchableOpa
 import {Menu, MenuOptions, MenuOption, MenuTrigger} from 'react-native-popup-menu';
 import { withTheme, Button } from 'react-native-paper';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 
 import Back from '../Shared/Back';
 
 import Chevron from "react-native-bootstrap-icons/icons/chevron-down";
 import Calendar from "react-native-bootstrap-icons/icons/calendar";
-
+import {baseUrl} from '../../config/config'
 const TambahRencana = props => {
     let menu;
+    const data = props.route.params.data;
+    const isEdit = data != undefined;
     // state
-    const [status, setStatus] = useState('Pemasukan');
+    const [status, setStatus] = useState(isEdit ? data.status == 'Up'?'Pemasukan':'Pengeluaran':'Pemasukan');
+    const [title, setTitle] = useState(isEdit ? data.title :'');
+    const [nominal, setNominal] = useState(isEdit ? data.nominal :0);
+    const [content, setContent] = useState(isEdit ? data.content :'');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [jadwalTampil, setJadwalTampil] = useState("Jadwal");
-    const [jadwal, setJadwal] = useState(0);
-    const [tema, setTema] = useState("Purple");
+    const [showDate, setShowDate] = useState(isEdit ? data.date :"Jadwal");
+    const [date, setDate] = useState(isEdit ? data.date :0);
+    const [tema, setTema] = useState(isEdit ? data.theme :"Purple");
+    const [loader, setLoader] = useState(false);
+    const [errAlert, setErrAlert] = useState(false);
     
     const { color, text, layout } = props.theme;
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
-
+    
     const styles = StyleSheet.create({
         contain: {
             alignItems: 'center', 
@@ -42,6 +50,13 @@ const TambahRencana = props => {
             overflow: 'hidden',
             backgroundColor: "#EFEFEF",
             color: color.primary,
+        },
+        nav:{
+            backgroundColor: `rgba(255, 255, 255, 1)`, 
+            zIndex: 9999, 
+            width: windowWidth, 
+            height: 80, 
+            position: 'absolute',
         },
         desc:{
             height: 200,
@@ -112,8 +127,8 @@ const TambahRencana = props => {
     const checkSelected = on => {
         return status == on ? text.subtitle : text.paragraph;
     }
-    const checkJadwal= () => {
-        return jadwalTampil != "Jadwal" ? text.primaryParagraph : text.paragraph;
+    const checkDate= () => {
+        return showDate != "Jadwal" ? text.primaryParagraph : text.paragraph;
     }
     const showDatePicker = () => {
         setDatePickerVisibility(true);
@@ -124,18 +139,57 @@ const TambahRencana = props => {
     }
     
     const handleConfirm = (tgl) => {
-        setJadwal(tgl);
+        setDate(tgl);
 
-        let tampil = `${tgl.getDate()}-${tgl.getMonth()+1}-${tgl.getFullYear()}`;
-        setJadwalTampil(tampil);
+        let show = `${tgl.getDate()}-${tgl.getMonth()+1}-${tgl.getFullYear()}`;
+        setShowDate(show);
         setDatePickerVisibility(false);
         
+    }
+
+    const addRencanaHandler = () => {
+        if(
+            date != 0 &&
+            title != '' &&
+            nominal != 0 &&
+            content != '' &&
+            Number.isInteger(parseInt(nominal))
+        ){
+            setLoader(true);
+            const planData = {
+                title: title,
+                content: content,
+                nominal: parseInt(nominal),
+                status: status == 'Pemasukan' ? 'Up' : 'Down',
+                date: date,
+                theme: tema
+            }
+            const getParams = isEdit ? data._id : props.route.params.id;
+
+            fetch(baseUrl+'plan/'+getParams, {
+                method: isEdit ? 'PUT':'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(planData)
+            })
+            .finally(() => {
+                setLoader(false);
+                setTimeout(() => {
+                    props.navigation.goBack();
+                    props.route.params.reload(true);
+                    props.route.params.reloadHome && props.route.params.reloadHome(true);
+                },300)
+            });
+        }else{
+            setErrAlert(true);
+        }
     }
 
     return(
         <View>
             {/* Back> */}
-            <Back theme = {props.theme} loc ="Tambah Rencana" navigation = {props.navigation}/>
+            <View style={styles.nav}>
+                <Back theme = {props.theme} loc ={`${isEdit ? 'Edit': 'Tambah'} Rencana`} navigation = {props.navigation}/>
+            </View>
             <ScrollView>
                 <View style={{ ...styles.contain,...layout.container}}>
                     <View style={styles.form}>
@@ -143,16 +197,19 @@ const TambahRencana = props => {
                         <TextInput style={styles.input}
                             placeholder="Nama rencana"
                             placeholderTextColor= {color.secondary}
+                            onChangeText = {text => setTitle(text)}
+                            defaultValue = {isEdit ? data.title :''}
                         />
                         {/* anggaran biaya */}
                         <TextInput style={styles.input}
                             placeholder="Anggaran biaya"
                             placeholderTextColor= {color.secondary}
-                            keyboardType = 'numeric'
+                            onChangeText = {text => setNominal(text)}
+                            defaultValue = {isEdit ? String(data.nominal) :''}
                         />
                         {/* jadwal */}
                         <TouchableOpacity style={styles.select} onPress={showDatePicker}>
-                            <Text style={checkJadwal()}>{jadwalTampil}</Text>
+                            <Text style={checkDate()}>{showDate}</Text>
                             <Calendar width="16" height="16" fill={color.primary}/>
                         </TouchableOpacity>
                         {/* status */}
@@ -175,6 +232,8 @@ const TambahRencana = props => {
                             placeholder="Deskripsi"
                             placeholderTextColor= {color.secondary}
                             multiline = {true}
+                            onChangeText = {text => setContent(text)}
+                            defaultValue = {isEdit ? data.content :''}
                         />
                         {/* tema */}
                         <View style={styles.temaPicker}>
@@ -200,12 +259,58 @@ const TambahRencana = props => {
                         />
                     </View>
                     <View style={styles.bot}>
-                        <Button style={{...styles.button, ...styles.tambah, ...layout.mt1}} labelStyle={{...text.whiteSubtitle, ...styles.buttonLabel}} mode="contained" onPress={() => console.log('add')}>
-                            Tambah
+                        <Button style={{...styles.button, ...styles.tambah, ...layout.mt1}} labelStyle={{...text.whiteSubtitle, ...styles.buttonLabel}} mode="contained" onPress={addRencanaHandler}>
+                            {isEdit ? 'Edit': 'Tambah'}
                         </Button>
                     </View>
                 </View>
             </ScrollView>
+            <AwesomeAlert
+                show={loader}
+                showProgress={false}
+                useNativeDriver={true}
+                message="Loading..."
+                closeOnTouchOutside={false}
+                closeOnHardwareBackPress={false}
+                contentContainerStyle={{
+                    alignItems: 'center'
+                }}
+                overlayStyle={{
+                    height: '100%'
+                }}
+                messageStyle={text.paragraph}
+            />
+            <AwesomeAlert
+                show={errAlert}
+                showProgress={false}
+                title="Data Tidak Valid"
+                message="Lengkapi semua kolom dengan data yang sesuai!"
+                closeOnTouchOutside={false}
+                closeOnHardwareBackPress={false}
+                showConfirmButton={true}
+                showCancelButton={false}
+                confirmText="Okay"
+                confirmButtonColor={color.primary}
+                contentContainerStyle={{
+                    width: '80%',
+                    alignItems: 'center'
+                }}
+                actionContainerStyle={{
+                    justifyContent:'center',
+                    width: '60%',
+                    marginTop: 12
+                }}
+                overlayStyle={{
+                    height: '100%'
+                }}
+                onConfirmPressed={() => {
+                    setErrAlert(false);
+                }}
+                titleStyle={text.title}
+                messageStyle={text.paragraph}
+                confirmButtonTextStyle={text.paragraphWhiteBold}
+                cancelButtonTextStyle={text.white}
+                />           
         </View> 
     )
 }

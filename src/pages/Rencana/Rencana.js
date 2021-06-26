@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import { StyleSheet, View, ScrollView, Dimensions, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, View, ScrollView, Dimensions, TouchableOpacity, Text, Image} from 'react-native';
 import { withTheme } from 'react-native-paper';
 import {Menu, MenuOptions, MenuOption, MenuTrigger} from 'react-native-popup-menu';
 
@@ -9,31 +9,48 @@ import Add from '../Shared/Add';
 import ListRencana from './ListRencana';
 
 import ArrowIcon from "react-native-bootstrap-icons/icons/arrow-down-up";
+import {baseUrl} from '../../config/config';
 
 const Rencana = (props) => {
     let menu;
     const [page, setPage] = useState(1);
     const rencanaListPage = useRef(null);
-    const [isLoading, setLoading] = useState(true);
+    const [loadData, setLoadData] = useState(true);
     const [allRencana, setAllRencana] = useState([]);
+    const [allRencanaAll, setAllRencanaAll] = useState([]);
     const [doneRencana, setDoneRencana] = useState([]);
+    const [doneRencanaAll, setDoneRencanaAll] = useState([]);
+    const [autoReload, setAutoReload] = useState(false);
     const { layout, text, color } = props.theme;
     const windowWidth = Dimensions.get('window').width;
+    const [onOption, setOnOption] = useState('terbaru');
 
+    const getData = () => {
+        fetch(`${baseUrl}plan/${props.route.params.id}`)
+        .then(res => res.json())
+        .then(data => {
+            setAllRencana(data);
+            setAllRencanaAll(data);
+        })
+
+        fetch(`${baseUrl}plan/${props.route.params.id}/done`)
+        .then(res => res.json())
+        .then(data => {
+            setDoneRencana(data);
+            setDoneRencanaAll(data);
+        })
+        .catch(e => console.log(e))
+        .finally(() => setLoadData(false))
+    }
     useEffect(() =>{
-        fetch('http://47.254.194.71/nabung_api/public/API/allRencana/1')
-        .then(res => res.json())
-        .then(data => setAllRencana(data))
-        .catch(e => console.log(e))
-
-        fetch('http://47.254.194.71/nabung_api/public/API/doneRencana/1')
-        .then(res => res.json())
-        .then(data => setDoneRencana(data))
-        .catch(e => console.log(e))
-        .finally(() => setLoading(false))
-
-        console.log(props.route)
+        getData();
     }, [])
+
+    if(autoReload){
+        getData();
+        console.log('reload...')
+        setAutoReload(false);
+    }
 
     const styles = StyleSheet.create({
         search:{
@@ -63,6 +80,16 @@ const Rencana = (props) => {
             alignSelf: 'stretch',
             width: windowWidth - 40,
             marginLeft: 20
+        },
+        onLoad: {
+            alignSelf: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: 150
+        },
+        loader:{
+            width: 90,
+            height: 90
         }
     })
     const optionsStyles = {
@@ -89,19 +116,57 @@ const Rencana = (props) => {
         rencanaListPage.current.scrollTo({ x: pos });
         pageHandler(pos);
     }
-    const listRencana = () => {
-        return allRencana.map((data, i) => {
+    const listRencana = rencana => {
+        if(rencana.length == 0){
             return(
-                <ListRencana theme ={props.theme} data={data} key = {i} navigation = {props.navigation}/>
+                <Text style={text.paragraph}>Tidak ada kegiatan yang direncanakan.</Text>
             )
-        })
+        }else{
+            return rencana.map((data, i) => {
+                return(
+                    <ListRencana theme ={props.theme} data={data} key = {i} id={props.route.params.id} reload={setAutoReload} reloadHome={props.route.params.reloadHome} navigation = {props.navigation}/>
+                )
+            })
+        }
     }
-    const listRencanaSelesai = () => {
-        return doneRencana.map((data, i) => {
+    const loadLayout = rencana => {
+        if(loadData){
             return(
-                <ListRencana theme ={props.theme} data={data} key = {i} navigation = {props.navigation}/>
+                <View style={styles.onLoad}>
+                    <Image style={styles.loader} source={require('../../assets/img/system/loader.gif')}></Image>
+                </View>
             )
-        })
+        }else{
+            return listRencana(rencana);
+        }
+    }
+    const searchHandler = keyword => { 
+        let newRencana = allRencanaAll.filter(data => data.title.toUpperCase().includes(keyword.toUpperCase()));
+        let newDoneRencana = doneRencanaAll.filter(data => data.title.toUpperCase().includes(keyword.toUpperCase()));
+        setAllRencana(newRencana);
+        setDoneRencana(newDoneRencana);
+    }
+    const latestHander = () => {
+        setAllRencana(allRencana.sort((a, b) => new Date(b.date) - new Date(a.date)));
+        setDoneRencana(doneRencana.sort((a, b) => new Date(b.date) - new Date(a.date)));
+        setOnOption('terbaru');
+    }
+    const earlierHandler = () => {
+        setAllRencana(allRencana.sort((a, b) => new Date(a.date) - new Date(b.date)));
+        setDoneRencana(doneRencana.sort((a, b) => new Date(a.date) - new Date(b.date)));
+        setOnOption('terdahulu');
+    }
+    const minHandler = () => {
+        let allRencanaSort = allRencana.sort((a, b) => a.nominal - b.nominal);
+        let doneRencanaSort = doneRencana.sort((a, b) => a.nominal - b.nominal);
+        setAllRencana(allRencanaSort);
+        setDoneRencana(doneRencanaSort);
+        setOnOption('terkecil');
+    }
+    const maxHandler = () => {
+        setAllRencana(allRencana.sort((a, b) => b.nominal - a.nominal));
+        setDoneRencana(doneRencana.sort((a, b) => b.nominal - a.nominal));
+        setOnOption('terbesar');
     }
     return (
         <View style={layout.container}>
@@ -109,7 +174,7 @@ const Rencana = (props) => {
             <Back theme = {props.theme} loc ="Rencana" navigation = {props.navigation}/>
             {/* Search */}
             <View style={styles.search}>
-                <Search theme = {props.theme} placeholder = "Cari rencana"/>
+                <Search theme = {props.theme} placeholder = "Cari rencana" action={searchHandler}/>
             </View>
             {/* Nav */}
             <View style={styles.nav}>
@@ -127,17 +192,17 @@ const Rencana = (props) => {
                             <ArrowIcon width="16" height="16" fill={color.secondary}/> 
                         </MenuTrigger>
                         <MenuOptions customStyles={optionsStyles} >
-                            <MenuOption onSelect={() => alert(`Click`)} >
-                                <Text style={text.subtitle}>Terbaru</Text>
+                            <MenuOption onSelect={latestHander} >
+                                <Text style={onOption == 'terbaru'?text.subtitle:text.paragraph}>Terbaru</Text>
                             </MenuOption>
-                            <MenuOption onSelect={() => alert(`Click`)} >
-                                <Text style={text.paragraph}>Terdahulu</Text>
+                            <MenuOption onSelect={earlierHandler} >
+                                <Text style={onOption == 'terdahulu'?text.subtitle:text.paragraph}>Terdahulu</Text>
                             </MenuOption>
-                            <MenuOption onSelect={() => alert(`Click`)} >
-                                <Text style={text.paragraph}>Nominal Terkecil</Text>
+                            <MenuOption onSelect={minHandler} >
+                                <Text style={onOption == 'terkecil'?text.subtitle:text.paragraph}>Nominal Terkecil</Text>
                             </MenuOption>
-                            <MenuOption onSelect={() => alert(`Click`)} >
-                                <Text style={text.paragraph}>Nominal Terbesar</Text>
+                            <MenuOption onSelect={maxHandler} >
+                                <Text style={onOption == 'terbesar'?text.subtitle:text.paragraph}>Nominal Terbesar</Text>
                             </MenuOption>
                         </MenuOptions>
                     </Menu>
@@ -152,18 +217,18 @@ const Rencana = (props) => {
             ref= {rencanaListPage}
              >
                 <ScrollView style={styles.listRencana}>
-                    {listRencana()}
+                    {loadLayout(allRencana)}
                     {/* black */}
                     <View style={styles.blank}></View>
                 </ScrollView>
                 <ScrollView style={styles.listRencana}>
-                    {listRencanaSelesai()}
+                    {loadLayout(doneRencana)}
                     {/* black */}
                     <View style={styles.blank}></View>
                 </ScrollView>
             </ScrollView>
             {/* Add */}
-            <Add theme = {props.theme} toPage = 'TambahRencana' navigation={props.navigation}/>
+            <Add theme = {props.theme} toPage = 'TambahRencana' reload={setAutoReload} reloadHome={props.route.params.reloadHome} id={props.route.params.id} navigation={props.navigation}/>
         </View>
     )
 }

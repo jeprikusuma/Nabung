@@ -1,9 +1,10 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import ListArtikel from './ListArtikel';
 
 
 const LayoutArtikel = (props) => {
+    const {text} = props.theme;
     const styles = StyleSheet.create({
             layout:{
             flexDirection: 'row',
@@ -36,17 +37,18 @@ const LayoutArtikel = (props) => {
         return props.data.map((data, i) => {
 
             return on == "Left" ? i % 2 == 0 && (
-                <ListArtikel key={i} theme={props.theme} data={data} navigation={props.navigation}/>
+                <ListArtikel key={i} theme={props.theme} data={{...data, ...{id: props.id, name: props.name, reload: props.reload}}} navigation={props.navigation}/>
             ) : i % 2 != 0 && (
-                <ListArtikel key={i} theme={props.theme} data={data} navigation={props.navigation}/>
+                <ListArtikel key={i} theme={props.theme} data={{...data, ...{id: props.id, name: props.name, reload: props.reload}}} navigation={props.navigation}/>
             )
-    })
+        })
 }
 
    return(
        <View style={styles.layout}>
            <View style={styles.left}>
-               {listArtikel("Left")}
+               {props.data.length == 0 ? <Text style={text.paragraph}>Tidak ada artikel.</Text>: listArtikel("Left")}
+               {}
                <View style={styles.blank}></View>
            </View>
            <View style={styles.right}>

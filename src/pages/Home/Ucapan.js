@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 
+const moment = require('moment');
+
 const Ucapan = props => {
     const [ucapan, setUcapan] = useState("");
     const [tanggal, setTanggal] = useState("");
@@ -16,7 +18,7 @@ const Ucapan = props => {
     useEffect(() => {
         const monthIn = ["Januari", "Februari", "Maret", "April", "Mei",
         "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        const date = new Date();
+        const date = new Date(moment().format());
         const jam = date.getHours();
             if(jam >= 4 && jam < 10){
                 setUcapan("Selamat Pagi");

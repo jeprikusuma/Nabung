@@ -13,7 +13,7 @@ import ChangeIcon from "react-native-bootstrap-icons/icons/arrow-repeat";
 import Back from '../Shared/Back';
 
 // config
-import {profileUrl,baseUrl} from '../../config/config'
+import {profileUrl,baseUrl} from '../../config/config';
 
 const Pengaturan = props => {
     const data = props.route.params.data;

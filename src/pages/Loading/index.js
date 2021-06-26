@@ -18,8 +18,8 @@ const Loading = props => {
             marginTop: screenHeight / 4
         },
         loader: {
-            width: 90,
-            height: 90
+            width: 60,
+            height: 60
         }
     })
     return (

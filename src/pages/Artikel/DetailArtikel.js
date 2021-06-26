@@ -1,8 +1,9 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, c, useRef, useEffect} from 'react';
 import { StyleSheet, View, ScrollView, Text, Dimensions, TouchableOpacity, Image, TextInput } from 'react-native';
 import { withTheme } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
 import { SharedElement } from 'react-navigation-shared-element';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 import Back from '../Shared/Back';
 
@@ -11,52 +12,58 @@ import LikeIconFill from "react-native-bootstrap-icons/icons/heart-fill";
 import SaveIcon from "react-native-bootstrap-icons/icons/bookmark";
 import SaveIconFill from "react-native-bootstrap-icons/icons/bookmark-fill";
 import SendIcon from "react-native-bootstrap-icons/icons/arrow-right-short";
+import DeleteIcon from "react-native-bootstrap-icons/icons/trash";
+import EditIcon from "react-native-bootstrap-icons/icons/pencil-fill";
 
-const allData = [
-    {
-        id: 1,  
-    },    
-    {
-        id: 2,  
-    },    
-    {
-        id: 3,  
-    },    
-    {
-        id: 4,  
-    },    
-    {
-        id: 5,  
-    },    
-    {
-        id: 6,  
-    },      
-    {
-        id: 11,  
-    },      
-    {
-        id: 12,  
-    },      
-    {
-        id: 13,  
-    },      
-    {
-        id: 14,  
-    },      
-]
+import {articleUrl, baseUrl} from '../../config/config';
+
+// const allData = [
+//     {
+//         id: 1,  
+//     },    
+//     {
+//         id: 2,  
+//     },    
+//     {
+//         id: 3,  
+//     },    
+//     {
+//         id: 4,  
+//     },    
+//     {
+//         id: 5,  
+//     },    
+//     {
+//         id: 6,  
+//     },      
+//     {
+//         id: 11,  
+//     },      
+//     {
+//         id: 12,  
+//     },      
+//     {
+//         id: 13,  
+//     },      
+//     {
+//         id: 14,  
+//     },      
+// ]
 
 const DetailArtikel = (props) => {
+    const data = props.route.params;
     const { layout, text, color } = props.theme;
     const [navOpacity, setNavOpacity] = useState(0);
-    const [isLike, setLike] = useState(false);
-    const [isSave, setSave] = useState(false);
-    const [comments, addComments] = useState([{from: "Rio Ariawan", comment: "Keren kak!"},{from: "Widya", comment: "Terimakasih ya kak, ilmunya bermanfaat sekali. Saya jadi tahu banyak tentang manajemen keuangan."}]);
+    const [isLike, setLike] = useState(data.likes.includes(data.id));
+    const [isSave, setSave] = useState(data.saves.includes(data.id));
+    const [isVisitor, setIsVisitor] = useState(data.user != data.id);
+    const [comments, addComments] = useState(data.comments);
     const [postComment, setPostComment] = useState("");
     const artikelScroll = useRef(null);
+    const [loader, setLoader] = useState(false);
+    const [deleteAlert, setDeleteAlert] = useState(false);
     const windowHeight = Dimensions.get('screen').height;
     const windowWidth = Dimensions.get('window').width;
-
-    const data = props.route.params;
 
     const styles = StyleSheet.create({
         container:{
@@ -152,6 +159,17 @@ const DetailArtikel = (props) => {
         }
     })
 
+    useEffect(() => {
+        fetch(baseUrl+'article/'+data._id)
+        .then(res => res.json())
+        .then(res => {
+            addComments(res[0].comments.reverse());
+            setLike(res[0].likes.includes(data.id));
+            setSave(res[0].saves.includes(data.id));
+        })
+
+    }, [])
+
     const scrollHandler = pos => {
         let on = pos > (windowWidth * 50 / 100) ? Math.abs((pos - (windowWidth * 50 / 100)) / (windowWidth * 20 / 100)) : 0;
         setNavOpacity(on);
@@ -180,20 +198,84 @@ const DetailArtikel = (props) => {
             )
         })
     }
-    const postCommentHandler = () => {
-        if(postComment != ""){
-            let newComment = comments
-            newComment.unshift({from: "Jepri Kusuma", comment: postComment})
-            addComments(newComment);
-            setPostComment("");
-        }
-    }
     const makeTgl = () => {
         const monthIn = ["Januari", "Februari", "Maret", "April", "Mei",
                         "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         const date = new Date(data.date)
         return `${date.getDate()} ${monthIn[date.getMonth()]} ${date.getFullYear()}`
     }
+    const commentHandler = () => {
+        if(postComment != ""){
+            const dataComment = {
+                from: data.name, 
+                username: data.name, 
+                comment: postComment
+            }
+            let newComment = comments
+            newComment.unshift(dataComment)
+            addComments(newComment);
+            fetch(`${baseUrl}article/comment/${data._id}`, {
+                method: 'patch',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(dataComment)
+            })
+            .then(() => data.reload(true));
+            setPostComment("");
+        }
+    }
+
+
+    const likeHandler = () => {
+        setLike(!isLike);
+        fetch(`${baseUrl}article/like/${data._id}`, {
+            method: 'patch',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                action: !isLike ? 'like' : 'unlike',
+                user: data.id
+            })
+        })
+        .then(() => data.reload(true));
+    }
+
+    const saveHandler = () => {
+        setSave(!isSave);
+        fetch(`${baseUrl}article/save/${data._id}`, {
+            method: 'patch',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                action: !isSave ? 'save' : 'unsave',
+                user: data.id
+            })
+        })
+        .then(() => data.reload(true));
+    }
+
+    const deleteHandler = () => {
+        setDeleteAlert(false);
+        setTimeout(() => {
+            setLoader(true);
+            fetch(`${baseUrl}article/${data._id}`, {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({img: data.img})
+            })
+            .then(() => {
+                setLoader(false);
+                setTimeout(() => {
+                    props.navigation.goBack();
+                    data.reload(true);
+                    data.reloadHome && data.reloadHome(true);
+                },300)
+            })
+        },300)
+    }
+
+    const editHandler = () => {
+        props.navigation.goBack();
+        props.navigation.push('BuatArtikel', {...{data: data}, ...{reload: data.reload}});
+    }
+
     return (
         <View >
             <StatusBar backgroundColor="transparent"/>
@@ -209,19 +291,37 @@ const DetailArtikel = (props) => {
                 {/* Image */}
                 <View style={styles.header}>
                     <SharedElement id={`artikel.${data.id}.img`}>
-                        <Image style={styles.image} source={{uri: "http://47.254.194.71/nabung_api/public/img/user/artikel/" + data.img}}></Image>
+                        <Image style={styles.image} source={{uri: articleUrl + data.img}}></Image>
                     </SharedElement>
                     <View style={styles.status}>
-                        <TouchableOpacity 
-                        style={{...styles.button, ...styles.like}}
-                        onPress = {() => setLike(!isLike)}>
-                            {checkLike()}
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                        style={{...styles.button, ...styles.save}}
-                        onPress = {() => setSave(!isSave)}>
-                            {checkSave()}
-                        </TouchableOpacity>
+                        {isVisitor && (
+                            <>
+                                <TouchableOpacity 
+                                style={{...styles.button, ...styles.like}}
+                                onPress = {likeHandler}>
+                                    {checkLike()}
+                                </TouchableOpacity>
+                                <TouchableOpacity 
+                                style={{...styles.button, ...styles.save}}
+                                onPress = {saveHandler}>
+                                    {checkSave()}
+                                </TouchableOpacity>
+                            </>
+                        )}
+                        {!isVisitor && (
+                            <>
+                                <TouchableOpacity 
+                                style={{...styles.button, ...styles.like}}
+                                onPress = {() => setDeleteAlert(true)}>
+                                    <DeleteIcon width="25" height="25" fill={color.red}/>
+                                </TouchableOpacity>
+                                <TouchableOpacity 
+                                style={{...styles.button, ...styles.save}}
+                                onPress = {editHandler}>
+                                    <EditIcon width="25" height="25" fill="#fff"/>
+                                </TouchableOpacity>
+                            </>
+                        )}
                     </View>
                 </View>
                 {/* Content */}
@@ -232,15 +332,15 @@ const DetailArtikel = (props) => {
                     </Text>
                     {/* oleh & tgl */}
                     <Text style={text.paragraph}>
-                        Oleh {data.user}
+                        Oleh {data.username}
                     </Text>
                     <Text style={text.paragraph}>
                         {makeTgl()}
                     </Text>
                     {/* konten */}
                     <View style={{...layout.mt1, ...layout.mb1}}>
-                        {makeParagraph("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.&&n&&Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printe. &&n&&Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.")}
-                        </View>
+                        {makeParagraph(data.content)}
+                    </View>
                     {/* Coment Input*/}
                     <View style={{...styles.commentIn, ...layout.mb1}}>
                         <TextInput style={styles.input}
@@ -248,13 +348,13 @@ const DetailArtikel = (props) => {
                             placeholderTextColor= {color.secondary}
                             returnKeyType = "send"
                             onFocus = {() => artikelScroll.current.scrollTo({ y: windowHeight})}
-                            onSubmitEditing = {() => postCommentHandler()}
+                            onSubmitEditing = {() => commentHandler()}
                             onChange = {e => setPostComment(e.nativeEvent.text)}
                             value = {postComment}
                         />
                         <TouchableOpacity 
                         style = {{...styles.button, ...styles.send, ...layout.ml1}}
-                        onPress = {() => postCommentHandler()}>
+                        onPress = {() => commentHandler()}>
                             <SendIcon width="27" height="27" fill="#fff"/>
                         </TouchableOpacity>
                     </View>
@@ -265,10 +365,60 @@ const DetailArtikel = (props) => {
                     </ScrollView>
                 </View>
             </ScrollView>
+            <AwesomeAlert
+                    show={deleteAlert}
+                    showProgress={false}
+                    title="Hapus Artikel"
+                    message="Apakah kamu yakin ingin menghapus artikel ini?"
+                    closeOnTouchOutside={false}
+                    closeOnHardwareBackPress={false}
+                    showCancelButton={true}
+                    showConfirmButton={true}
+                    cancelText="Tidak"
+                    confirmText="Hapus"
+                    confirmButtonColor="#DD6B55"
+                    contentContainerStyle={{
+                        width: '80%',
+                        alignItems: 'center'
+                    }}
+                    actionContainerStyle={{
+                        justifyContent:'space-between',
+                        width: '60%',
+                        marginTop: 12
+                    }}
+                    overlayStyle={{
+                        height: '100%'
+                    }}
+                    onCancelPressed={() => {
+                        setDeleteAlert(false);
+                    }}
+                    onConfirmPressed={() => {
+                        deleteHandler();
+                    }}
+                    titleStyle={text.title}
+                    messageStyle={text.paragraph}
+                    confirmButtonTextStyle={text.paragraphWhiteBold}
+                    cancelButtonTextStyle={text.white}
+                />
+                <AwesomeAlert
+                    show={loader}
+                    showProgress={false}
+                    useNativeDriver={true}
+                    message="Loading..."
+                    closeOnTouchOutside={false}
+                    closeOnHardwareBackPress={false}
+                    contentContainerStyle={{
+                        alignItems: 'center'
+                    }}
+                    overlayStyle={{
+                        height: '100%'
+                    }}
+                    messageStyle={text.paragraph}
+                />
         </View>
     )
 }
-DetailArtikel.sharedElements = () => {
-    return allData.map(data => `artikel.${data.id}.img`);
-}
+// DetailArtikel.sharedElements = () => {
+//     return allData.map(data => `artikel.${data.id}.img`);
+// }
 export default withTheme(DetailArtikel);

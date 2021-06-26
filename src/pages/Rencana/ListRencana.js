@@ -22,7 +22,16 @@ const ListRencana = (props) => {
            flex: 1,
        },
    })
-
+   const formatRp = saving => {
+        const text = String(saving);
+        let rest = "";
+        let a = 1;
+        for(i = text.length - 1 ; i >= 0 ; i--){
+            a % 3 == 0 && a != text.length ? rest = '.' + text[i] + rest : rest = text[i] + rest ;
+            a++;
+        }
+        return `Rp. ${rest}`
+    }
    const getBg = tema => {
        if(tema == "Red"){
            return color.redBg;
@@ -50,16 +59,18 @@ const ListRencana = (props) => {
                month: monthName[toDate.getMonth()],
                year: toDate.getFullYear()}
    }
-   const dateFormat = getDateFormat(props.data.upload_at);
+   const dateFormat = getDateFormat(props.data.date);
    return(
-       <TouchableOpacity style={{...styles.listRencana, ...layout.mb1}} onPress={() => props.navigation.push('DetailRencana', props.data)}>
+       <TouchableOpacity style={{...styles.listRencana, ...layout.mb1}} onPress={() => {
+           props.navigation.push('DetailRencana', {...props.data, ...{reload: props.reload, reloadHome: props.reloadHome}})}
+           }>
            <View style={{...styles.listRencanaIcon, ...layout.mr1, ...{backgroundColor:  getBg(props.data.theme)}}}>
                 <Text style={{...text.subtitle, ...{color: getColor(props.data.theme)}}}>{dateFormat.month}</Text>
                 <Text style={{...text.paragraph, ...{color: getColor(props.data.theme)}}}>{dateFormat.year}</Text>             
            </View>
            <View style={styles.listRencanaIsi}>
                <Text style={text.subtitle}>{props.data.title}</Text>
-               <Text style={text.paragraph}>{props.data.description}</Text>
+               <Text style={text.paragraph}>{`${props.data.status == 'Up' ? 'Pemasukan' : 'Pengeluaran'} yang direncanakan sebesar ${formatRp(props.data.nominal)}`}</Text>
            </View>
        </TouchableOpacity>
    )

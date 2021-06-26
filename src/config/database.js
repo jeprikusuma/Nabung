@@ -11,10 +11,12 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
+
 // Use Firestore
 const db = firebase.firestore(app);
 
 export const Users = db.collection('users');
 export const Transactions = db.collection('transactions');
+export const Graph = db.collection('graph');
 
 export {firebase};

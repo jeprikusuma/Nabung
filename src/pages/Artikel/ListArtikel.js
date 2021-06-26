@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native';
 import { SharedElement } from 'react-navigation-shared-element';
 
@@ -6,8 +6,12 @@ import GoIcon from "react-native-bootstrap-icons/icons/arrow-right-short";
 import Like from "react-native-bootstrap-icons/icons/heart-fill";
 import Comment from "react-native-bootstrap-icons/icons/chat-fill";
 
+import {articleUrl} from '../../config/config';
+
 const ListArtikel = (props) => {
     const {color, text, layout} = props.theme;
+    const [isPress, setIsPress] = useState(false);
+
     const styles = StyleSheet.create({
         discoverArtikel:{
             alignSelf: 'stretch',
@@ -77,15 +81,17 @@ const ListArtikel = (props) => {
             marginTop: 5
         }
      })
-
+     
    return(
-       <TouchableOpacity style={styles.discoverArtikel} onPress={() => props.navigation.push('DetailArtikel', props.data)}>
+       <TouchableOpacity style={styles.discoverArtikel} onPress={() => props.navigation.push('DetailArtikel', props.data)} onPressIn={() => setIsPress(true)} onPressOut={() => setIsPress(false)}>
            <View style={styles.artikel}>
                <View style={styles.discoverImage}>
                    <View style={styles.imageLoading}>
-                        <Image style={styles.loader} source={require('../../assets/img/system/loader.gif')}></Image>
+                       {!isPress && (
+                           <Image style={styles.loader} source={require('../../assets/img/system/loader.gif')}></Image>
+                       )}
                         <SharedElement id={`artikel.${props.data.id}.img`}>
-                            <Image style={styles.image} source={{uri: "http://47.254.194.71/nabung_api/public/img/user/artikel/" + props.data.img}}></Image>
+                            <Image style={styles.image} source={{uri: articleUrl + props.data.img}}></Image>
                         </SharedElement>
                    </View>
                    <View style={styles.go}>

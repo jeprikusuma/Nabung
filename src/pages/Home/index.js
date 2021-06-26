@@ -10,6 +10,7 @@ import ArtikelNavigation from '../Artikel'
 import RencanaNavigation from '../Rencana'
 import DetailArtikel from '../Artikel/DetailArtikel'
 import DetailRencana from '../Rencana/DetailRencana';
+import TambahRencana from '../Rencana/TambahRencana';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -35,12 +36,13 @@ function HomeNavigation() {
         <Stack.Screen name="ArtikelNavigation" component={ArtikelNavigation}/>
         <Stack.Screen name="RencanaNavigation" component={RencanaNavigation} />
         <Stack.Screen name="DetailRencana" component={DetailRencana} />
+        <Stack.Screen name="TambahRencana" component={TambahRencana} />
         <Stack.Screen name="DetailArtikel" component={DetailArtikel} 
         options={{
           gestureEnabled: false,
             transitionSpec:{
-                open: {animation: 'timing', config: {duration: 300}},
-                close: {animation: 'timing', config: {duration: 300}},
+                open: {animation: 'timing', config: {duration: 100}},
+                close: {animation: 'timing', config: {duration: 100}},
             },
             cardStyleInterpolator:({current: {progress}})=>{
                 return {

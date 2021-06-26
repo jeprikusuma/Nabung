@@ -14,13 +14,13 @@ const Blank = props => {
         },
 
         logo: {
-            width: 55,
-            height: 105,
+            width: 170,
+            height: 60,
             marginTop: screenHeight / 4
         },
         loader: {
-            width: 50,
-            height: 50
+            width: 60,
+            height: 60
         }
     })
     const getData = async () => {

@@ -208,7 +208,6 @@ const Tabungan = props => {
         setTrans(transSort);
         setTransMonth(transMonthSort);
         setOnOption('terkecil');
-        console.log(transSort)
     }
     const maxHandler = () => {
         setTrans(trans.sort((a, b) => b.nominal - a.nominal));

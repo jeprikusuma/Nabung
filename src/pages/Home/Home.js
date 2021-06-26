@@ -16,46 +16,70 @@ import Artikel from './Artikel';
 import ListRencana from '../Rencana/ListRencana'
 
 // Config
-import {Users} from '../../config/database'
-import {profileUrl} from '../../config/config'
+import {Users, Graph} from '../../config/database'
+import {profileUrl, baseUrl} from '../../config/config'
 
 const Home = (props) => {
     const { color, text, layout } = props.theme;
     const [isLoading, setLoading] = useState(true);
     const [user, setUser] = useState({}) ;
+    const [graph, setGraph] = useState({}) ;
     const [artikels, setArtikels] = useState([]) ;
     const [rencanas, setRencanas] = useState([]) ;
+    const [autoReloadRencana, setAutoReloadRencana] = useState(false);
     const [id, setId] = useState(null);
 
-    const fetchData = async (id) => {
-        setId(id);
-
-        // get user data
-        await Users.doc(id).onSnapshot(snapshot => {
-            const getUser = snapshot.data();
-            setUser({
-                id: id,
-                name: getUser.name,
-                profile: getUser.profile,
-                saving: getUser.saving,
-                email: getUser.email,
-                register_at: getUser.date,
-                lastTransaction: getUser.lastTransaction
-            });
-        }, err => {
-            console.log(`Encountered error: ${err}`);
-        });
-
-        await fetch('http://47.254.194.71/nabung_api/public/API/newArtikels/')
-        .then(res => res.json())
-        .then(data => setArtikels(data))
-        .catch(e => console.log(e))
-
-        await fetch('http://47.254.194.71/nabung_api/public/API/newRencana/1')
+    const fetchRencana = async id => {
+        await fetch(`${baseUrl}plan/${id}/limit`)
         .then(res => res.json())
         .then(data => setRencanas(data))
-        .catch(e => console.log(e))
-        .finally(() => setLoading(false))
+        
+    }
+    if(autoReloadRencana){
+        fetchRencana(id);
+        setAutoReloadRencana(false);
+    }
+    const fetchData = async id => {
+        setId(id);
+        try{
+            // get user data
+            await Users.doc(id).onSnapshot(snapshot => {
+                const getUser = snapshot.data();
+                setUser({
+                    id: id,
+                    name: getUser.name,
+                    profile: getUser.profile,
+                    saving: getUser.saving,
+                    email: getUser.email,
+                    register_at: getUser.date,
+                    lastTransaction: getUser.lastTransaction
+                });
+            }, err => {
+                console.log(`Encountered error: ${err}`);
+            });
+
+            // get graph data
+            await Graph.doc(id).onSnapshot(snapshot => {
+                setGraph(snapshot.data());
+            }, err => {
+                console.log(`Encountered error: ${err}`);
+            });
+            
+            // rencana
+            await fetchRencana(id);
+
+            // article
+            await fetch(baseUrl+'articles/'+id)
+            .then(res => res.json())
+            .then(data => {
+                setArtikels(data);
+            })
+            .catch(e => console.log(e))
+            .finally(() => setLoading(false))
+            
+        }catch(err) {
+           console.log(err);
+        }
     }
 
     const getId = async () => {
@@ -73,7 +97,6 @@ const Home = (props) => {
     }
 
     useEffect(() =>{
-
         const gettingId = new Promise((res, rej) => {
             const result = getId();
             res(result);
@@ -161,16 +184,22 @@ const Home = (props) => {
     const listArtikel = () => {
         return artikels.map((data, i) => {
             return(
-                <Artikel key={i} theme={props.theme} data = {data} navigation={props.navigation}/>
+                <Artikel key={i} theme={props.theme} data={{...data, ...{name: user.name}}}  navigation={props.navigation}/>
             )
         })
     }
     const listRencana = () => {
-        return rencanas.map((data, i) => {
+        if(rencanas.length == 0){
             return(
-                <ListRencana theme ={props.theme} data={data} key = {i} navigation = {props.navigation}/>
+                <Text style={{...text.paragraph, ...layout.mb1}}>Tidak ada kegiatan yang direncanakan.</Text>
             )
-        })
+        }else{
+            return rencanas.map((data, i) => {
+                return(
+                    <ListRencana theme={props.theme} data={data} key={i} navigation={props.navigation} reload={setAutoReloadRencana}/>
+                )
+            })
+        }
     }
     return (
         <ScrollView>
@@ -192,7 +221,7 @@ const Home = (props) => {
                     {/* Tabungan */}
                     <Tabungan theme={props.theme} data={user} navigation={props.navigation}/>
                     {/* Grafik */}
-                    <Grafik theme={props.theme}/>
+                    <Grafik theme={props.theme} data={graph}/>
                     {/* Artikel */}
                     <View style={styles.area}>
                         <View style={{...styles.lainnya, ...layout.mb1}}>
@@ -200,7 +229,7 @@ const Home = (props) => {
                         </View>
                         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} disableIntervalMomentum = {true}>
                             {listArtikel()}
-                            <TouchableOpacity style={styles.artikel} onPress={() => props.navigation.navigate('ArtikelNavigation')}>
+                            <TouchableOpacity style={styles.artikel} onPress={() => props.navigation.push('ArtikelNavigation', {id: user.id, name: user.name})}>
                                 <View style={styles.artikelArea}>
                                     <GoIcon width="35" style={styles.backIcon} height="35" fill="#fff"/>
                                 </View>
@@ -214,7 +243,7 @@ const Home = (props) => {
                             <Text style={text.subtitle}>Rencana Anda</Text>
                         </View>
                         {listRencana()}
-                        <Button style={{...styles.rencanaLainnya}} labelStyle={{...text.subtitle, ...styles.rencanaLainnyaLabel}} onPress={() => props.navigation.navigate('RencanaNavigation', {id: id})}>
+                        <Button style={{...styles.rencanaLainnya}} labelStyle={{...text.subtitle, ...styles.rencanaLainnyaLabel}} onPress={() => props.navigation.navigate('RencanaNavigation', {id, reload: setAutoReloadRencana})}>
                                 Atur rencana
                         </Button>
                     </View>
